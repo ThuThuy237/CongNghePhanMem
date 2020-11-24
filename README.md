@@ -1,0 +1,2 @@
+# CongNghePhanMem
+bai tap nhom
