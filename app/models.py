@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from app import db
 from flask_login import UserMixin
 
@@ -32,7 +32,7 @@ class Login(db.Model, UserMixin):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), nullable=False)
     password = Column(String(50), nullable=False)
-    access = Column(Boolean, nullable=False) # True - quyen them xoa sua
+    access = Column(Boolean, nullable=False)  # True - quyen them xoa sua
     employee = relationship('Employee', backref='login', lazy=True, uselist=False)
 
     def __str__(self):
@@ -62,7 +62,7 @@ class Categories(InforBase):
         return self.name
 
 
-#Nhà xuất bản
+# Nhà xuất bản
 class Publisher(InforBase):
     __tablename__ = 'publisher'
 
@@ -74,7 +74,7 @@ class Publisher(InforBase):
         return self.name
 
 
-#Nhà cung cấp
+# Nhà cung cấp
 class Supplier(InforBase):
     __tablename__ = 'supplier'
 
@@ -89,15 +89,19 @@ class Supplier(InforBase):
 class Books(InforBase):
     __tablename__ = 'books'
 
-    author = Column(String(50), nullable=False) #Tác
-    inventory = Column(Integer, nullable=False) # lượng hàng
-    price = Column(Float, nullable=False) #Gi
+    author = Column(String(50), nullable=False)  # Tác
+    inventory = Column(Integer, nullable=False)  # lượng hàng
+    price = Column(Float, nullable=False)  # Gi
     cat_id = Column(Integer, ForeignKey(Categories.id), nullable=False)
     publisher_id = Column(Integer, ForeignKey(Publisher.id), nullable=False)
 
     def __str__(self):
         return self.name
 
+    suppliers = relationship('Supplier',
+                             secondary='buy_detail',
+                             lazy='subquery',
+                             backref=backref('books', lazy=True))
 
 class Order(db.Model):
     __tablename__ = 'order'
@@ -111,8 +115,12 @@ class Order(db.Model):
     def __str__(self):
         return self.name
 
+    books = relationship('Books',
+                             secondary='order_detail',
+                             lazy='subquery',
+                             backref=backref('order', lazy=True))
 
-orderDetai = db.Table('orderdetail',
+order_detai = db.Table('order_detail',
                       Column('bookId', Integer, ForeignKey(Books.id), primary_key=True),
                       Column('orderId', Integer, ForeignKey(Order.id), primary_key=True),
                       Column('quantity', Integer, nullable=False))
@@ -130,11 +138,10 @@ class Buy(db.Model):
         return self.name
 
 
-buyDetail = db.Table('buydetail',
+buy_detail = db.Table('buy_detail',
                      Column('supplierId', Integer, ForeignKey(Supplier.id), nullable=False, primary_key=True),
                      Column('bookId', Integer, ForeignKey(Books.id), nullable=False, primary_key=True),
                      Column('quantity', Integer, nullable=False))
-
 
 if __name__ == '__main__':
     db.create_all()
