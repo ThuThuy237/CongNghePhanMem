@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey
+from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from app import db
+from flask_login import UserMixin
 
 
 class InforBase(db.Model):
@@ -22,14 +23,20 @@ class UserBase(InforBase):
 class Customer(UserBase):
     __tablename__ = 'customer'
 
+    order = relationship('Order', backref='customer', lazy=True)
 
-class Login(db.Model):
+
+class Login(db.Model, UserMixin):
     __tablename__ = 'login'
 
-    name = Column(String(20), nullable=False, primary_key=True)
-    password = Column(String(20), nullable=False)
-    access = Column(String(20), nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String(50), nullable=False)
+    password = Column(String(50), nullable=False)
+    access = Column(Boolean, nullable=False) # True - quyen them xoa sua
     employee = relationship('Employee', backref='login', lazy=True, uselist=False)
+
+    def __str__(self):
+        return self.name
 
 
 class Employee(InforBase):
@@ -37,7 +44,12 @@ class Employee(InforBase):
 
     title = Column(String(20), nullable=False)
     hireDate = Column(DateTime, nullable=False)
-    userName = Column(String(20), ForeignKey(Login.name), nullable=False)
+    userid = Column(Integer, ForeignKey(Login.id), nullable=False)
+    oder = relationship('Order', backref='emloyee', lazy=True)
+    buy = relationship('Buy', backref='employee', lazy=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Categories(InforBase):
@@ -46,28 +58,45 @@ class Categories(InforBase):
     describe = Column(String(255))
     books = relationship('Books', backref='categories', lazy=True)
 
+    def __str__(self):
+        return self.name
 
+
+#Nhà xuất bản
 class Publisher(InforBase):
     __tablename__ = 'publisher'
 
     address = Column(String(255))
     phone = Column(String(20))
+    books = relationship('Books', backref='publisher', lazy=True)
+
+    def __str__(self):
+        return self.name
 
 
+#Nhà cung cấp
 class Supplier(InforBase):
     __tablename__ = 'supplier'
 
     address = Column(String(255))
     phone = Column(String(20))
+    buy = relationship('Buy', backref='supplier', lazy=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Books(InforBase):
     __tablename__ = 'books'
 
-    author = Column(String(50), nullable=False)
-    inventory = Column(Integer, nullable=False)
+    author = Column(String(50), nullable=False) #Tác
+    inventory = Column(Integer, nullable=False) # lượng hàng
+    price = Column(Float, nullable=False) #Gi
     cat_id = Column(Integer, ForeignKey(Categories.id), nullable=False)
     publisher_id = Column(Integer, ForeignKey(Publisher.id), nullable=False)
+
+    def __str__(self):
+        return self.name
 
 
 class Order(db.Model):
@@ -79,16 +108,32 @@ class Order(db.Model):
     emm_id = Column(Integer, ForeignKey(Employee.id), nullable=False)
     cus_id = Column(Integer, ForeignKey(Customer.id), nullable=False)
 
+    def __str__(self):
+        return self.name
 
-orderDetai = db.Table('orderditail',
+
+orderDetai = db.Table('orderdetail',
                       Column('bookId', Integer, ForeignKey(Books.id), primary_key=True),
-                      Column('orderId', Integer, ForeignKey(Order.id), primary_key=True))
-'''class OrderDetail(db.Model):
-    __tablename__ = 'orderdetail'
+                      Column('orderId', Integer, ForeignKey(Order.id), primary_key=True),
+                      Column('quantity', Integer, nullable=False))
 
-    order_id = Column(Integer,ForeignKey(Order.id), nullable=False, primary_key=True)
-    book_id = Column(Integer, ForeignKey(Books.id), nullable=False, primary_key=True)
-    price = Column(Float, nullable=False)'''
+
+class Buy(db.Model):
+    __tablename__ = 'buy'
+    id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
+    date = Column(DateTime, nullable=False)
+    total = Column(Float, nullable=False)
+    supplier_id = Column(Integer, ForeignKey(Supplier.id), nullable=False)
+    emm_id = Column(Integer, ForeignKey(Employee.id), nullable=False)
+
+    def __str__(self):
+        return self.name
+
+
+buyDetail = db.Table('buydetail',
+                     Column('supplierId', Integer, ForeignKey(Supplier.id), nullable=False, primary_key=True),
+                     Column('bookId', Integer, ForeignKey(Books.id), nullable=False, primary_key=True),
+                     Column('quantity', Integer, nullable=False))
 
 
 if __name__ == '__main__':
