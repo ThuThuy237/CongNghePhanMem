@@ -1,0 +1,62 @@
+<h1 class="text-center text-primary">ADD USER</h1>
+{% if err_msg %}
+<div class="alert alert-warning">
+    {{ err_msg }}
+</div>
+{% endif %}
+<form method="post"
+     action=""
+     enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="name">Họ tên</label>
+        <input type="text"
+               required
+               id="name"
+               name="name"
+               class="form-control" />
+    </div>
+   <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email"
+               required
+               id="email"
+               name="email"
+               class="form-control" />
+    </div>
+   <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text"
+               required
+               id="username"
+               name="username"
+               class="form-control" />
+    </div>
+   <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <input type="password"
+               required
+               id="password"
+               name="password"
+               class="form-control" />
+    </div>
+   <div class="form-group">
+        <label for="confirm">Xác nhận mật khẩu</label>
+        <input type="password"
+               required
+               id="confirm"
+               name="confirm"
+               class="form-control" />
+    </div>
+   <div class="form-group">
+        <label for="avatar">Ảnh đại diện</label>
+        <input type="file"
+               required
+               id="avatar"
+               name="avatar"
+               class="form-control" />
+    </div>
+   <div class="form-group">
+       <input type="submit" value="ADD"
+              class="btn btn-danger" />
+   </div>
+</form>

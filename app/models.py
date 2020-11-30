@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey, Boolean, Enum
 from sqlalchemy.orm import relationship, backref
 from app import db
 from flask_login import UserMixin
+from enum import Enum as LoginEnum
 
 
 class InforBase(db.Model):
@@ -26,13 +27,20 @@ class Customer(UserBase):
     order = relationship('Order', backref='customer', lazy=True)
 
 
+class LoginRole(LoginEnum):
+    ADMIN = 1;
+    USER = 2;
+
 class Login(db.Model, UserMixin):
     __tablename__ = 'login'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50))
     username = Column(String(50), nullable=False)
     password = Column(String(50), nullable=False)
-    access = Column(Boolean, nullable=False)  # True - quyen them xoa sua
+    email = Column(String(50), nullable=False)
+    avatar = Column(String(100))
+    login_role = Column(Enum(LoginRole), default=LoginRole.USER)
     employee = relationship('Employee', backref='login', lazy=True, uselist=False)
 
     def __str__(self):

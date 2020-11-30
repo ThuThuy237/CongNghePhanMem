@@ -1,8 +1,9 @@
-from app import app, login
-from flask_login import login_user, AnonymousUserMixin
-from flask import render_template, request, flash
+from app import login
+from flask_login import login_user
+from flask import flash
 from app.admin import *
-import hashlib
+from app.models import Login
+from app.utils import check_login
 
 
 @app.route('/')
@@ -15,10 +16,7 @@ def login_admin():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password', "")
-        # loc lai
-        password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
-        user = Login.query.filter(Login.username == username.strip(),
-                                  Login.password == password).first()
+        user = check_login(username=username, password=password)
 
         if user:
             login_user(user=user)
