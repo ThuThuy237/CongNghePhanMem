@@ -4,14 +4,32 @@
     <meta charset="UTF-8">
     <title>Trang chủ</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
+          crossorigin="anonymous">
+    <script src="{{url_for('static', filename='js/main.js')}}"></script>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center text-success" >Chào mừng đến với trang web nhà sách Open  </h1>
-        <ul>
-            <li><a href=#> Hello  </a></li>
-            <li><a href=#> XinChao </a></li>
-        </ul>
+        <a class="TTlogo" href="#">T&T <span class="bookstore">Bookstore</span></a>
+        <h2 class="right"> In books lies the soul of the whole past time</h2>
+    </div>
+    <div class="container" style="padding: 5% 0 0 0">
+        <h1 class="text-center text-primary">LOGIN</h1>
+        <form method="post" action="{{ url_for('login_admin')}}" class="form-setting">
+            <div class="form-group">
+                <input class="form-control" name="username" type="text"
+                       placeholder="user name......"/>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" class="form-control"
+                       placeholder="password......"/>
+            </div>
+            <div>
+                <input type="submit" value="Login" class="btn btn-danger login" />
+            </div>
+        </form>
     </div>
 </body>
 </html>

@@ -24,3 +24,4 @@ def add_user(name, username, email, password, avatar, ):
     except Exception as ex:
         print(ex)
         return False
+
