@@ -26,6 +26,9 @@ class Customer(UserBase):
 
     order = relationship('Order', backref='customer', lazy=True)
 
+    def __str__(self):
+        return self.name
+
 
 class LoginRole(LoginEnum):
     ADMIN = 1
@@ -99,9 +102,10 @@ class Supplier(InforBase):
 class Books(InforBase):
     __tablename__ = 'books'
 
-    author = Column(String(50), nullable=False)  # Tác
+    author = Column(String(50), nullable=False)  # Tác gia
     inventory = Column(Integer, nullable=False)  # lượng hàng
-    price = Column(Float, nullable=False)  # Gi
+    price = Column(Float, nullable=False)  # Gia
+    image = Column(String(100))  # Hinh anh
     cat_id = Column(Integer, ForeignKey(Categories.id), nullable=False)
     publisher_id = Column(Integer, ForeignKey(Publisher.id), nullable=False)
 
