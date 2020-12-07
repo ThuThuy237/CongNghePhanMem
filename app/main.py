@@ -6,9 +6,9 @@ from app.models import Login
 from app.utils import check_login
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+# @app.route('/')
+# def index():
+#     return render_template('index.html')
 
 
 @app.route("/login-admin/", methods=["get", "post"])
@@ -25,7 +25,7 @@ def login_admin():
         pass
     else:
         flash('Login Fail')
-    return redirect('/admin')
+    return redirect('/')
 
 
 @login.user_loader
@@ -60,16 +60,15 @@ def register():
     return render_template('addUser.html', err_msg=err_msg)
 
 
-@app.route('/books')
+@app.route('/')
 def book_list():
-    book_id = request.args.get('book_id')
+    cat_id = request.args.get('cat_id')
     kw = request.args.get('kw')
     from_price = request.args.get('from_price')
     to_price = request.args.get('to_price')
-    books = utils.read_books(book_id=book_id, kw=kw, from_price=from_price, to_price=to_price)
+    books = utils.read_books(cate_id=cat_id, kw=kw, from_price=from_price, to_price=to_price)
 
-    return render_template('list-book.html',
-                           books=books)
+    return render_template('list-book.html', books=books)
 
 
 if __name__ == '__main__':

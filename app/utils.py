@@ -40,11 +40,11 @@ def read_customers(cus_id=None, kw=None):
     return customers.all()
 
 
-def read_books(book_id=None, kw=None, from_price=None, to_price=None):
+def read_books(cate_id=None, kw=None, from_price=None, to_price=None):
     books = Books.query
 
-    if book_id:
-        books = books.filter(Books.id == book_id)
+    if cate_id:
+        books = books.filter(Books.cat_id == cate_id)
 
     if kw:
         books = books.filter(Books.name.contains(kw))
@@ -53,6 +53,7 @@ def read_books(book_id=None, kw=None, from_price=None, to_price=None):
         books = books.filter(Books.price.__gt__(from_price),
                              Books.price.__lt__(to_price))
 
+    # return books.first()
     return books.all()
 
 
