@@ -1,0 +1,53 @@
+* {
+    font-family: Tahoma;
+}
+
+a:-webkit-any-link{
+    cursor: pointer;
+    text-decoration: none;
+    color:inherit;
+}
+
+.TTlogo{
+    font-family: fontawesome;
+    font-size: 37px;
+}
+
+.TTlogo .bookstore{
+    color: #00CC99;
+}
+
+.right{
+    float: right!important;
+}
+
+h2{
+    margin: 15px 0 0;
+    font-family: 'Brush Script MT', cursive;
+    position: relative;
+}
+
+.bgnav{
+    background-color: #00CC99;
+    font-size: 25px;
+    position: relative;
+}
+
+.navitem{
+    margin: auto 20px;
+}
+
+.login{
+    margin: 0 50%;
+    font-size: 22px;
+    text-align: center;
+}
+
+.form-setting{
+    width: 50%;
+    margin: 0 25%;
+}
+
+.iconbar{
+    color: #FFFFFF;
+}
