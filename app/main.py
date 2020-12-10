@@ -1,6 +1,6 @@
 from app import login
-from flask_login import login_user
-from flask import flash
+from flask_login import login_user, login_required, logout_user
+from flask import flash, render_template
 from app.admin import *
 from app.models import Login
 from app.utils import check_login
@@ -25,7 +25,7 @@ def login_admin():
         pass
     else:
         flash('Login Fail')
-    return redirect('/')
+    return redirect('/admin')
 
 
 @login.user_loader
@@ -33,31 +33,13 @@ def user_load(user_id):
     return Login.query.get(user_id)
 
 
-@app.route("/admin/adduserview/", methods=['get', 'post'])
-def register():
-    err_msg = ""
-    if request.method == 'POST':
-        password = request.form.get('password')
-        confirm = request.form.get('confirm')
-        if password == confirm:
-            name = request.form.get('name')
-            email = request.form.get('email')
-            username = request.form.get('username')
-            avatar = request.files["avatar"]
-
-            avatar_path = 'images/upload/%s' % avatar.filename
-            avatar.save(os.path.join(app.root_path,
-                                     'static/',
-                                     avatar_path))
-            if utils.add_user(name=name, email=email, username=username,
-                              password=password, avatar=avatar_path):
-                return redirect('/')
-            else:
-                err_msg = "Hệ thống đang có lỗi! Vui lòng quay lại sau!"
-        else:
-            err_msg = "Mật khẩu KHÔNG khớp!"
-
-    return render_template('addUser.html', err_msg=err_msg)
+@app.route("/logout")
+@login_required
+def log_out():
+    user = current_user
+    user.authenticated = False
+    logout_user()
+    return redirect('/admin')
 
 
 @app.route('/')
@@ -69,6 +51,13 @@ def book_list():
     books = utils.read_books(cate_id=cat_id, kw=kw, from_price=from_price, to_price=to_price)
 
     return render_template('list-book.html', books=books)
+
+
+# @app.route("/admin/sellview/")
+# def book_by_cate_list():
+#     books = utils.read_books(kw='a')
+#     a = 'haha'
+#     return render_template('sell.html', books=books, a=a)
 
 
 if __name__ == '__main__':

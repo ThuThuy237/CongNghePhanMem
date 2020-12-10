@@ -28,6 +28,19 @@ def get_user_by_id(user_id):
     return Login.query.get(user_id)
 
 
+# def find_categories():
+#     cate = set()
+#     for b in read_books():
+#         cate.add(b.cat_id)
+#     return cate
+
+
+def get_cate_by_id(id=None):
+    return Categories.query.filter(Categories.id == id).all()
+
+
+
+
 def read_customers(cus_id=None, kw=None):
     customers = Customer.query
 
@@ -55,6 +68,16 @@ def read_books(cate_id=None, kw=None, from_price=None, to_price=None):
 
     # return books.first()
     return books.all()
+
+def read_categories(kw=None):
+    categories = Categories.query
+
+    if kw:
+        categories = categories.filter(Categories.name.contains(kw))
+
+
+    return categories.all()
+
 
 
 def get_book_by_id(book_id):
