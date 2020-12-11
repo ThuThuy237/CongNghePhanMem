@@ -21,7 +21,7 @@ function addToCart(id, name, price) {
 }
 
 function addToSell(id, name, price) {
-    fetch('/admin/sellview', {
+    fetch('/api/sellcart', {
         method: "post",
         body: JSON.stringify({
             "id": id,
@@ -33,6 +33,7 @@ function addToSell(id, name, price) {
         }
     }).then(res => res.json()).then(data => {
         console.info(data);
+        location.reload();
         var cart = document.getElementById("cart-info");
         cart.innerText = `${data.total_quantity} - ${data.total_amount} VNĐ`;
     }).catch(err => {
@@ -40,4 +41,18 @@ function addToSell(id, name, price) {
     })
 
     // promise --> await/async
+}
+
+function pay() {
+    fetch('/api/pay', {
+        method: "post",
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(res => res.json()).then(data => {
+        alert(data.message);
+        location.reload();
+    }).catch(err => {
+        location.href = '/admin/sellview';
+    })
 }

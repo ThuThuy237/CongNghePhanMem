@@ -1,4 +1,7 @@
 import hashlib
+
+from flask_login import current_user
+
 from app.models import *
 
 
@@ -28,11 +31,25 @@ def get_user_by_id(user_id):
     return Login.query.get(user_id)
 
 
-# def find_categories():
-#     cate = set()
-#     for b in read_books():
-#         cate.add(b.cat_id)
-#     return cate
+def add_order(cart):
+    if cart and current_user.is_authenticated:
+        order = Order(emm_id=current_user.id)
+        db.session.add()
+
+        for p in list(cart.values()):
+            detail = order_detai(order=order,
+                                   bookId=int(p["id"]),
+                                   quantity=p["quantity"],
+                                   price=p["price"])
+            db.session.add(detail)
+
+        try:
+            db.session.commit()
+            return True
+        except Exception as ex:
+            print(ex)
+
+    return False
 
 
 def get_cate_by_id(id=None):

@@ -24,8 +24,8 @@ class AddUserView(BaseView):
                                          'static/',
                                          avatar_path))
                 if utils.add_user(name=name, email=email, username=username,
-                                  password=password, avatar=avatar_path):
-                    return redirect('/')
+                                  password=password, avatar='/static/'+avatar_path):
+                    return redirect('/admin/adduserview/')
                 else:
                     err_msg = "Hệ thống đang có lỗi! Vui lòng quay lại sau!"
             else:
@@ -41,9 +41,9 @@ class SellView(BaseView):
     @expose('/', methods=['get', 'post'])
 
     def book_by_cate_list(self):
-        books = utils.read_books()
+        ut = utils
         cate = utils.read_categories()
-        return self.render('admin/sell.html', books=books, cate=cate)
+        return self.render('admin/sell.html', ut=ut, cate=cate)
 
     def add(self):
         return self.render('admin/sell.html')

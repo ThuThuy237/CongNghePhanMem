@@ -18,9 +18,9 @@
             {% for cate in cate %}
             <h2 class="text-danger" id="{{cate.name}}">{{cate.name}}</h2>
             <div class="card-columns" style="column-count: 5!important;">
-                {% for b in books %}
+                {% for b in ut.read_books(cate.id) %}
                 <button class="card" href="javascript:;"
-                       onclick="addToCart({{ b.id }}, '{{b.name}}', {{ b.price }})">
+                       onclick="addToSell({{ b.id }}, '{{b.name}}', {{ b.price }})">
                     <div class="card-body text-center">
                         <img width="90" src="{{ url_for('static', filename=b.image) }}" alt="{{ b.name }}"/>
                         <p class="card-text">{{ b.name }}</p>
@@ -34,15 +34,45 @@
     </div>
 </div>
 <div class="cash">
-    <form>
-        <h1>Danh sach san pham</h1>
-        <a class="badge badge-warning" href="#" id="cart-info"></a>
-        <div>abc</div>
-        <div>abc</div>
-        <div>abc</div>
+    <h1 class="text-center text-info">DANH SÁCH SẢN PHẨM</h1>
+    <a class="badge badge-warning" href="#" id="cart-info"></a>
 
-        <button>Theem</button>
-    </form>
+    <table class="table">
+        <tr>
+            <th>Id</th>
+            <th>Tên sản phẩm</th>
+            <th>Gía</th>
+            <th>Số lượng</th>
+        </tr>
+        {% if 'cart' in session %}
+        {% for p in session['cart'].values() %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.price }}</td>
+            <td>
+                <div class="form-group">
+                    <input type="number"
+                           value="{{ p.quantity }}"
+                           class="form-control" />
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="4">Không có sản phẩm nào!</td>
+        </tr>
+        {% endif %}
+    </table>
+    {% if cart_info %}
+    <h3>Số lượng SP: {{ cart_info.total_quantity }}</h3>
+    <h3>Tổng tiền: {{ cart_info.total_amount }} VNĐ</h3>
+    {% endif %}
+    <input  type="button"
+            onclick="pay()"
+            value="Thanh toán"
+            class="btn btn-danger" />
 </div>
 
 </body>

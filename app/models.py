@@ -139,7 +139,8 @@ class Order(db.Model):
 order_detai = db.Table('order_detail',
                        Column('bookId', Integer, ForeignKey(Books.id), primary_key=True),
                        Column('orderId', Integer, ForeignKey(Order.id), primary_key=True),
-                       Column('quantity', Integer, nullable=False))
+                       Column('quantity', Integer, nullable=False),
+                       Column('price', Integer, nullable=False))
 
 
 class Buy(db.Model):

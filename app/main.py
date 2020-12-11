@@ -39,6 +39,7 @@ def user_load(user_id):
 def log_out():
     user = current_user
     user.authenticated = False
+    session.clear()
     logout_user()
     return redirect('/admin')
 
@@ -86,12 +87,56 @@ def cart():
     })
 
 
+@app.route('/api/sellcart', methods=["get", "post"])
+def sellcart():
+    if 'cart' not in session:
+        session['cart'] = {}
 
-# @app.route("/admin/sellview/")
-# def book_by_cate_list():
-#     books = utils.read_books(kw='a')
-#     a = 'haha'
-#     return render_template('sell.html', books=books, a=a)
+    cart = session['cart']
+
+    data = request.json
+    id = str(data.get("id"))
+    name = data.get("name")
+    price = data.get("price")
+
+    if id in cart:
+        cart[id]["quantity"] = cart[id]["quantity"] + 1
+    else:
+        cart[id] = {
+            "id": id,
+            "name": name,
+            "price": price,
+            "quantity": 1
+        }
+
+    session['cart'] = cart
+
+    quan, price = utils.cart_stats(cart)
+
+    return jsonify({
+        "total_amount": price,
+        "total_quantity": quan
+    })
+
+
+@app.route('/payment')
+def payment():
+    quan, price = utils.cart_stats(session.get('cart'))
+    cart_info = {
+        "total_amount": price,
+        "total_quantity": quan
+    }
+    return render_template('payment.html',
+                           cart_info=cart_info)
+
+
+@app.route('/api/pay', methods=['post'])
+def pay():
+    if utils.add_order(session.get('cart')):
+        del session['cart']
+        return jsonify({'message': 'Add receipt successful!'})
+
+    return jsonify({'message': 'failed'})
 
 
 if __name__ == '__main__':
