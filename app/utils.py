@@ -79,6 +79,15 @@ def read_categories(kw=None):
     return categories.all()
 
 
+def cart_stats(cart):
+    total_quantity, total_amount = 0, 0
+    if cart:
+        for p in cart.values():
+            total_quantity = total_quantity + p["quantity"]
+            total_amount = total_amount + p["quantity"] * p["price"]
+
+    return total_quantity, total_amount
+
 
 def get_book_by_id(book_id):
     return Books.query.get(book_id)

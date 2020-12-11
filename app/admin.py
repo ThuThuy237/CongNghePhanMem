@@ -2,7 +2,7 @@ import os
 from flask_admin import BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from app import admin, app, utils
-from flask import redirect, request
+from flask import redirect, request, session, jsonify
 from flask_login import current_user
 
 
@@ -38,7 +38,8 @@ class AddUserView(BaseView):
 
 
 class SellView(BaseView):
-    @expose('/')
+    @expose('/', methods=['get', 'post'])
+
     def book_by_cate_list(self):
         books = utils.read_books()
         cate = utils.read_categories()

@@ -19,7 +19,8 @@
             <h2 class="text-danger" id="{{cate.name}}">{{cate.name}}</h2>
             <div class="card-columns" style="column-count: 5!important;">
                 {% for b in books %}
-                <button class="card" style="wi">
+                <button class="card" href="javascript:;"
+                       onclick="addToCart({{ b.id }}, '{{b.name}}', {{ b.price }})">
                     <div class="card-body text-center">
                         <img width="90" src="{{ url_for('static', filename=b.image) }}" alt="{{ b.name }}"/>
                         <p class="card-text">{{ b.name }}</p>
@@ -35,6 +36,7 @@
 <div class="cash">
     <form>
         <h1>Danh sach san pham</h1>
+        <a class="badge badge-warning" href="#" id="cart-info"></a>
         <div>abc</div>
         <div>abc</div>
         <div>abc</div>

@@ -1,9 +1,10 @@
 from app import login
 from flask_login import login_user, login_required, logout_user
-from flask import flash, render_template
+from flask import flash, render_template,  session, jsonify
 from app.admin import *
 from app.models import Login
 from app.utils import check_login
+import json
 
 
 # @app.route('/')
@@ -42,7 +43,7 @@ def log_out():
     return redirect('/admin')
 
 
-@app.route('/')
+@app.route('/', methods=["get", "post"])
 def book_list():
     cat_id = request.args.get('cat_id')
     kw = request.args.get('kw')
@@ -51,6 +52,39 @@ def book_list():
     books = utils.read_books(cate_id=cat_id, kw=kw, from_price=from_price, to_price=to_price)
 
     return render_template('list-book.html', books=books)
+
+
+@app.route('/api/cart', methods=["get", "post"])
+def cart():
+    if 'cart' not in session:
+        session['cart'] = {}
+
+    cart = session['cart']
+
+    data = request.json
+    id = str(data.get("id"))
+    name = data.get("name")
+    price = data.get("price")
+
+    if id in cart:
+        cart[id]["quantity"] = cart[id]["quantity"] + 1
+    else:
+        cart[id] = {
+            "id": id,
+            "name": name,
+            "price": price,
+            "quantity": 1
+        }
+
+    session['cart'] = cart
+
+    quan, price = utils.cart_stats(cart)
+
+    return jsonify({
+        "total_amount": price,
+        "total_quantity": quan
+    })
+
 
 
 # @app.route("/admin/sellview/")
