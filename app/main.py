@@ -7,11 +7,6 @@ from app.utils import check_login
 import json
 
 
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
-
-
 @app.route("/login-admin/", methods=["get", "post"])
 def login_admin():
     if request.method == 'POST':

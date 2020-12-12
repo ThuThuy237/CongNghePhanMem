@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey, Enum
 from sqlalchemy.orm import relationship, backref
 from app import db
@@ -15,10 +17,10 @@ class InforBase(db.Model):
 class UserBase(InforBase):
     __abstract__ = True
 
-    gender = Column(String(10), nullable=False)
-    birthday = Column(DateTime, nullable=False)
+    gender = Column(String(10))
+    birthday = Column(String(50))
     address = Column(String(255))
-    phone = Column(String(15), )
+    phone = Column(String(15))
 
 
 class Customer(UserBase):
@@ -55,7 +57,7 @@ class Employee(InforBase):
     __tablename__ = 'employee'
 
     title = Column(String(20), nullable=False)
-    hireDate = Column(DateTime, nullable=False)
+    hireDate = Column(String(50))
     userid = Column(Integer, ForeignKey(Login.id), unique=True)
     account = relationship('Login', backref='employee', lazy=True, uselist=False)
     oder = relationship('Order', backref='employee', lazy=True)
@@ -122,10 +124,10 @@ class Order(db.Model):
     __tablename__ = 'order'
 
     id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
-    date = Column(DateTime, nullable=False)
+    date = Column(DateTime, nullable=False, default=datetime.today())
     total = Column(Float, nullable=False)
     emm_id = Column(Integer, ForeignKey(Employee.id), nullable=False)
-    cus_id = Column(Integer, ForeignKey(Customer.id), nullable=False)
+    cus_id = Column(Integer, ForeignKey(Customer.id))
 
     def __str__(self):
         return self.name
@@ -136,11 +138,22 @@ class Order(db.Model):
                          backref=backref('order', lazy=True))
 
 
-order_detai = db.Table('order_detail',
-                       Column('bookId', Integer, ForeignKey(Books.id), primary_key=True),
-                       Column('orderId', Integer, ForeignKey(Order.id), primary_key=True),
-                       Column('quantity', Integer, nullable=False),
-                       Column('price', Integer, nullable=False))
+class OrderDetail(db.Model):
+    __tablename__ = 'order_detail'
+
+    id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
+    book_id = Column(Integer, ForeignKey(Books.id))
+    order_id = Column(Integer, ForeignKey(Order.id))
+    quantity = Column(Integer, nullable=False)
+    price = Column(Integer, nullable=False)
+
+    def __str__(self):
+        return self.name
+# order_detai = db.Table('order_detail',
+#                        Column('bookId', Integer, ForeignKey(Books.id), primary_key=True),
+#                        Column('orderId', Integer, ForeignKey(Order.id), primary_key=True),
+#                        Column('quantity', Integer, nullable=False),
+#                        Column('price', Integer, nullable=False))
 
 
 class Buy(db.Model):

@@ -35,8 +35,6 @@
 </div>
 <div class="cash">
     <h1 class="text-center text-info">DANH SÁCH SẢN PHẨM</h1>
-    <a class="badge badge-warning" href="#" id="cart-info"></a>
-
     <table class="table">
         <tr>
             <th>Id</th>
@@ -54,21 +52,19 @@
                 <div class="form-group">
                     <input type="number"
                            value="{{ p.quantity }}"
-                           class="form-control" />
+                           class="form-control " id="{{ p.id }}" style="width: 100px;"/>
                 </div>
             </td>
         </tr>
         {% endfor %}
         {% else %}
         <tr>
-            <td colspan="4">Không có sản phẩm nào!</td>
+            <td id="nothing " colspan="4">Không có sản phẩm nào!</td>
         </tr>
         {% endif %}
+        <tr id="list-product"></tr>
     </table>
-    {% if cart_info %}
-    <h3>Số lượng SP: {{ cart_info.total_quantity }}</h3>
-    <h3>Tổng tiền: {{ cart_info.total_amount }} VNĐ</h3>
-    {% endif %}
+    <h1 id="cart-info"></h1>
     <input  type="button"
             onclick="pay()"
             value="Thanh toán"

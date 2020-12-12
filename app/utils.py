@@ -1,5 +1,5 @@
 import hashlib
-
+from app import utils
 from flask_login import current_user
 
 from app.models import *
@@ -33,14 +33,15 @@ def get_user_by_id(user_id):
 
 def add_order(cart):
     if cart and current_user.is_authenticated:
-        order = Order(emm_id=current_user.id)
-        db.session.add()
+        quan, total = utils.cart_stats(cart)
+        order = Order(emm_id=current_user.id, total=total, cus_id=1)
+        db.session.add(order)
 
         for p in list(cart.values()):
-            detail = order_detai(order=order,
-                                   bookId=int(p["id"]),
-                                   quantity=p["quantity"],
-                                   price=p["price"])
+            detail = OrderDetail(order_id=order.id,
+                                 book_id=int(p["id"]),
+                                 quantity=p["quantity"],
+                                 price=p["price"])
             db.session.add(detail)
 
         try:
@@ -54,8 +55,6 @@ def add_order(cart):
 
 def get_cate_by_id(id=None):
     return Categories.query.filter(Categories.id == id).all()
-
-
 
 
 def read_customers(cus_id=None, kw=None):
@@ -86,12 +85,12 @@ def read_books(cate_id=None, kw=None, from_price=None, to_price=None):
     # return books.first()
     return books.all()
 
+
 def read_categories(kw=None):
     categories = Categories.query
 
     if kw:
         categories = categories.filter(Categories.name.contains(kw))
-
 
     return categories.all()
 
