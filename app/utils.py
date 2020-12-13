@@ -34,11 +34,11 @@ def get_user_by_id(user_id):
 def add_order(cart):
     if cart and current_user.is_authenticated:
         quan, total = utils.cart_stats(cart)
-        order = Order(emm_id=current_user.id, total=total, cus_id=1)
+        order = Order(emm_id=current_user.id, total=total, cus_id=1) # customerID đổi nếu có thời gian
         db.session.add(order)
 
         for p in list(cart.values()):
-            detail = OrderDetail(order_id=order.id,
+            detail = OrderDetail(order=order,
                                  book_id=int(p["id"]),
                                  quantity=p["quantity"],
                                  price=p["price"])

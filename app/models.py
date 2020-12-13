@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey, Enu
 from sqlalchemy.orm import relationship, backref
 from app import db
 from flask_login import UserMixin
-from enum import Enum as LoginEnum
+from enum import Enum as dbEnum
 
 
 class InforBase(db.Model):
@@ -32,39 +32,44 @@ class Customer(UserBase):
         return self.name
 
 
-class LoginRole(LoginEnum):
+class LoginRole(dbEnum):
     ADMIN = 1
     USER = 2
 
 
-class Login(db.Model, UserMixin):
-    __tablename__ = 'login'
-
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = Column(String(50))
-    username = Column(String(50), nullable=False)
-    password = Column(String(50), nullable=False)
-    email = Column(String(50), nullable=False)
-    avatar = Column(String(100))
-    login_role = Column(Enum(LoginRole), default=LoginRole.USER)
-    # employee = relationship('Employee', backref='login', lazy=True, uselist=False)
-
-    def __str__(self):
-        return self.name
+class TitleRole(dbEnum):
+    CASHIER = 1
+    STAFF = 2
+    MANAGER = 3
 
 
-class Employee(InforBase):
+class Employee(db.Model):
     __tablename__ = 'employee'
 
-    title = Column(String(20), nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50))
+    title = Column(Enum(TitleRole), default=TitleRole.STAFF)
     hireDate = Column(String(50))
-    userid = Column(Integer, ForeignKey(Login.id), unique=True)
     account = relationship('Login', backref='employee', lazy=True, uselist=False)
     oder = relationship('Order', backref='employee', lazy=True)
     buy = relationship('Buy', backref='employee', lazy=True)
 
     def __str__(self):
         return self.name
+
+
+class Login(db.Model, UserMixin):
+    __tablename__ = 'login'
+
+    id = Column(Integer, ForeignKey(Employee.id), nullable=False, primary_key=True)
+    username = Column(String(50), nullable=False)
+    password = Column(String(50), nullable=False)
+    email = Column(String(50), nullable=False)
+    avatar = Column(String(100))
+    login_role = Column(Enum(LoginRole), default=LoginRole.USER)
+
+    def __str__(self):
+        return self.employee.name
 
 
 class Categories(InforBase):
@@ -128,9 +133,7 @@ class Order(db.Model):
     total = Column(Float, nullable=False)
     emm_id = Column(Integer, ForeignKey(Employee.id), nullable=False)
     cus_id = Column(Integer, ForeignKey(Customer.id))
-
-    def __str__(self):
-        return self.name
+    detail = relationship('OrderDetail', backref='order', lazy=True)
 
     books = relationship('Books',
                          secondary='order_detail',
@@ -149,11 +152,6 @@ class OrderDetail(db.Model):
 
     def __str__(self):
         return self.name
-# order_detai = db.Table('order_detail',
-#                        Column('bookId', Integer, ForeignKey(Books.id), primary_key=True),
-#                        Column('orderId', Integer, ForeignKey(Order.id), primary_key=True),
-#                        Column('quantity', Integer, nullable=False),
-#                        Column('price', Integer, nullable=False))
 
 
 class Buy(db.Model):

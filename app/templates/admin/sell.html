@@ -34,13 +34,13 @@
     </div>
 </div>
 <div class="cash">
-    <h1 class="text-center text-info">DANH SÁCH SẢN PHẨM</h1>
+    <h1 class="text-center text-info">PRODUCT LIST</h1>
     <table class="table">
         <tr>
-            <th>Id</th>
-            <th>Tên sản phẩm</th>
-            <th>Gía</th>
-            <th>Số lượng</th>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>PRICE</th>
+            <th>QUANTITY</th>
         </tr>
         {% if 'cart' in session %}
         {% for p in session['cart'].values() %}
@@ -59,16 +59,16 @@
         {% endfor %}
         {% else %}
         <tr>
-            <td id="nothing " colspan="4">Không có sản phẩm nào!</td>
+            <td id="nothing " colspan="4">No product in list !</td>
         </tr>
         {% endif %}
         <tr id="list-product"></tr>
     </table>
     <h1 id="cart-info"></h1>
-    <input  type="button"
-            onclick="pay()"
-            value="Thanh toán"
-            class="btn btn-danger" />
+    <input type="button"
+           onclick="pay()"
+           value="Pay"
+           class="btn btn-danger" />
 </div>
 
 </body>

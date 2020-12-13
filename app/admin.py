@@ -1,9 +1,11 @@
 import os
 from flask_admin import BaseView, expose
 from flask_admin.contrib.sqla import ModelView
-from app import admin, app, utils
+from app import admin, app, utils, db
 from flask import redirect, request, session, jsonify
 from flask_login import current_user
+
+from app.models import Employee, Login, Supplier, Publisher, Categories, LoginRole
 
 
 class AddUserView(BaseView):
@@ -39,7 +41,6 @@ class AddUserView(BaseView):
 
 class SellView(BaseView):
     @expose('/', methods=['get', 'post'])
-
     def book_by_cate_list(self):
         ut = utils
         cate = utils.read_categories()
@@ -49,6 +50,18 @@ class SellView(BaseView):
         return self.render('admin/sell.html')
 
 
+class ImportView(BaseView):
+    @expose('/', methods=['get', 'post'])
+    def list_book(self):
+        list_book = utils.read_books()
+        cate = utils.read_categories()
+        return self.render('admin/import.html', list_book=list_book, cate=cate)
+
+    def add(self):
+        return self.render('admin/import.html')
+
+
+
 class ManagerView(ModelView):
     """
     Nếu tài khoản đăng nhập có login_role == ADMIN thì hiển thị ManagerView
@@ -56,9 +69,16 @@ class ManagerView(ModelView):
 
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.login_role
+            if(current_user.login_role == LoginRole.ADMIN):
+                return current_user.login_role
 
 
 admin.add_view(AddUserView(name='Add User'))
 admin.add_view(SellView(name="Sell"))
+admin.add_view(ImportView(name="Import"))
 # admin.add_view(LogoutView(name='Log Out'))
+admin.add_view(ManagerView(Login, db.session))
+admin.add_view(ManagerView(Employee, db.session))
+admin.add_view(ManagerView(Supplier, db.session))
+admin.add_view(ManagerView(Publisher, db.session))
+admin.add_view(ManagerView(Categories, db.session))
