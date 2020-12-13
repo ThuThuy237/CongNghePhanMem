@@ -119,11 +119,6 @@ class Books(InforBase):
     def __str__(self):
         return self.name
 
-    suppliers = relationship('Supplier',
-                             secondary='buy_detail',
-                             lazy='subquery',
-                             backref=backref('books', lazy=True))
-
 
 class Order(db.Model):
     __tablename__ = 'order'
@@ -144,7 +139,7 @@ class Order(db.Model):
 class OrderDetail(db.Model):
     __tablename__ = 'order_detail'
 
-    id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
+    id = Column(Integer, autoincrement=True, primary_key=True)
     book_id = Column(Integer, ForeignKey(Books.id))
     order_id = Column(Integer, ForeignKey(Order.id))
     quantity = Column(Integer, nullable=False)
@@ -156,20 +151,26 @@ class OrderDetail(db.Model):
 
 class Buy(db.Model):
     __tablename__ = 'buy'
-    id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
-    date = Column(DateTime, nullable=False)
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    date = Column(DateTime, default=datetime.today())
     total = Column(Float, nullable=False)
-    supplier_id = Column(Integer, ForeignKey(Supplier.id), nullable=False)
+    supplier_id = Column(Integer, ForeignKey(Supplier.id))
     emm_id = Column(Integer, ForeignKey(Employee.id), nullable=False)
+    detail = relationship('BuyDetail', backref='buy', lazy=True)
 
     def __str__(self):
         return self.name
 
 
-buy_detail = db.Table('buy_detail',
-                      Column('supplierId', Integer, ForeignKey(Supplier.id), nullable=False, primary_key=True),
-                      Column('bookId', Integer, ForeignKey(Books.id), nullable=False, primary_key=True),
-                      Column('quantity', Integer, nullable=False))
+class BuyDetail(db.Model):
+    __tablename__ = 'buy_detail'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    book_id = Column(Integer, ForeignKey(Books.id))
+    buy_id = Column(Integer, ForeignKey(Buy.id))
+    quantity = Column(Integer, nullable=False)
+    price = Column(Integer, nullable=False)
+
 
 if __name__ == '__main__':
     db.create_all()

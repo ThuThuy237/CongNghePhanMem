@@ -1,0 +1,51 @@
+{% extends 'admin/index.html' %}
+{% block body %}
+{% if current_user.is_authenticated %}
+<form method="post"
+      action=""
+      enctype="multipart/form-data">
+    <input type="radio" id="new" name="newold" value="new" onchange="show()" title="checked if import new product">
+    <label for="new" style="width: 40%;">New</label>
+    <input type="radio" id="old" name="newold" value="old" onchange="hide()" checked title="checked if import old product">
+    <label for="old">Old</label><br>
+    <div class="form-group">
+        <label for="name">Name </label>
+        <datalist id="name-of-book">
+            {% for p in list_book %}
+            <option value="{{ p.name }}">
+                {% endfor %}
+        </datalist>
+        <input list="name-of-book"
+               autocomplete="on"
+               required
+               id="name"
+               name="name"
+               class="form-control"/>
+    </div>
+    <datalist id="list-of-cate">
+        {% for p in cate %}
+        <option value="{{ p.name }}">{{ p.name }}</option>
+        {% endfor %}
+    </datalist>
+    <div class="form-group">
+        <label for="quantity">Quantity </label>
+        <input type="number "
+               required
+               id="quantity"
+               name="quantity"
+               class="form-control"/>
+    </div>
+    <div id="hide-if-old"></div>
+    <div class="form-group">
+        <buton class="btn btn-danger">ADD BOOK</buton>
+        <input type="submit" value="COMPLETE" class="btn btn-danger"/>
+    </div>
+</form>
+<h1 class="cart-info"></h1>
+{% else %}
+{% include 'admin/login.html' %}
+{% endif %}
+{% endblock %}'
+
+
+

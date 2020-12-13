@@ -53,6 +53,40 @@ def add_order(cart):
     return False
 
 
+def add_buy(supplier, total):
+    if current_user.is_authenticated:
+        buy = Buy(emm_id=current_user.id, supplier_id=supplier, total=total)
+        db.session.add(buy)
+        try:
+            db.session.commit()
+            return True
+        except Exception as ex:
+            print(ex)
+
+        return False
+
+
+# def add_buy_detail(name, quantity, price, category, author, img):
+#     if current_user.is_authenticated:
+#         buy_detail = BuyDetail(emm_id=current_user.id, supplier_id=supplier)
+#         db.session.add(order)
+#
+#         for p in list(cart.values()):
+#             detail = OrderDetail(order=order,
+#                                  book_id=int(p["id"]),
+#                                  quantity=p["quantity"],
+#                                  price=p["price"])
+#             db.session.add(detail)
+#
+#         try:
+#             db.session.commit()
+#             return True
+#         except Exception as ex:
+#             print(ex)
+#
+#     return False
+
+
 def get_cate_by_id(id=None):
     return Categories.query.filter(Categories.id == id).all()
 
@@ -67,6 +101,15 @@ def read_customers(cus_id=None, kw=None):
         customers = customers.filter(Customer.name.contains(kw))
 
     return customers.all()
+
+
+def read_supplier(kw=None):
+    supplier = Supplier.query
+
+    if kw:
+        supplier = supplier.filter(Supplier.name.contains(kw))
+
+    return supplier.all()
 
 
 def read_books(cate_id=None, kw=None, from_price=None, to_price=None):

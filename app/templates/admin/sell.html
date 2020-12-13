@@ -35,7 +35,7 @@
 </div>
 <div class="cash">
     <h1 class="text-center text-info">PRODUCT LIST</h1>
-    <table class="table">
+    <table class="table" id="new-product">
         <tr>
             <th>ID</th>
             <th>NAME</th>
@@ -58,11 +58,7 @@
         </tr>
         {% endfor %}
         {% else %}
-        <tr>
-            <td id="nothing " colspan="4">No product in list !</td>
-        </tr>
         {% endif %}
-        <tr id="list-product"></tr>
     </table>
     <h1 id="cart-info"></h1>
     <input type="button"

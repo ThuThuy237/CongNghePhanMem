@@ -51,30 +51,30 @@ def book_list():
 
 
 @app.route('/api/cart', methods=["get", "post"])
-def cart():
-    if 'cart' not in session:
-        session['cart'] = {}
+def mycart():
+    if 'mycart' not in session:
+        session['mycart'] = {}
 
-    cart = session['cart']
+    mycart = session['mycart']
 
     data = request.json
     id = str(data.get("id"))
     name = data.get("name")
     price = data.get("price")
 
-    if id in cart:
-        cart[id]["quantity"] = cart[id]["quantity"] + 1
+    if id in mycart:
+        mycart[id]["quantity"] = mycart[id]["quantity"] + 1
     else:
-        cart[id] = {
+        mycart[id] = {
             "id": id,
             "name": name,
             "price": price,
             "quantity": 1
         }
 
-    session['cart'] = cart
+    session['mycart'] = mycart
 
-    quan, price = utils.cart_stats(cart)
+    quan, price = utils.cart_stats(mycart)
 
     return jsonify({
         "total_amount": price,
@@ -114,6 +114,38 @@ def sellcart():
     })
 
 
+@app.route('/api/buycart', methods=["get", "post"])
+def buycart():
+    if 'buycart' not in session:
+        session['buycart'] = {}
+
+    buycart = session['buycart']
+
+    data = request.json
+    id = str(data.get("id"))
+    name = data.get("name")
+    price = data.get("price")
+
+    if id in buycart:
+        buycart[id]["quantity"] = buycart[id]["quantity"] + 1
+    else:
+        buycart[id] = {
+            "id": id,
+            "name": name,
+            "price": price,
+            "quantity": 1
+        }
+
+    session['buycart'] = buycart
+
+    quan, price = utils.cart_stats(buycart)
+
+    return jsonify({
+        "total_amount": price,
+        "total_quantity": quan
+    })
+
+
 @app.route('/payment')
 def payment():
     quan, price = utils.cart_stats(session.get('cart'))
@@ -132,6 +164,18 @@ def pay():
         return jsonify({'message': 'Add receipt successful!'})
 
     return jsonify({'message': 'failed'})
+
+
+# @app.route('/admin/iportview', methods=["get", "post"])
+# def iport_book():
+#     name = request.form.get('name')
+#     quantity = request.form.get('quantity')
+#     categogy = request.form.get('category')
+#     author = request.form.get('author')
+#     price = request.form.get('price')
+#     img = request.file['image']
+
+
 
 
 if __name__ == '__main__':

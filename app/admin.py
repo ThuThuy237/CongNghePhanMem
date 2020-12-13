@@ -52,14 +52,40 @@ class SellView(BaseView):
 
 class ImportView(BaseView):
     @expose('/', methods=['get', 'post'])
-    def list_book(self):
-        list_book = utils.read_books()
-        cate = utils.read_categories()
-        return self.render('admin/import.html', list_book=list_book, cate=cate)
+    def imp(self):
+        supp = utils.read_supplier()
+        # chuyển qua trang import_detail nếu method = post
+        if request.method == 'POST':
+            list_book = utils.read_books()
+            cate = utils.read_categories()
+            return self.render('admin/import_detail.html', list_book=list_book, cate=cate)
+        return self.render('admin/import.html', supp=supp)
+
+    def buy(self):
+        supplier = request.form.get('supplier')
+        total = request.form.get('total')
 
     def add(self):
         return self.render('admin/import.html')
 
+# class ImportView(BaseView):
+#     @expose('/', methods=['get', 'post'])
+#     def list_book(self):
+#         list_book = utils.read_books()
+#         cate = utils.read_categories()
+#         supp = utils.read_supplier()
+#         return self.render('admin/import_detail.html', list_book=list_book, cate=cate, supp=supp)
+#
+#     def iport_book(self):
+#         name = request.form.get('name')
+#         quantity = request.form.get('quantity')
+#         categogy = request.form.get('category')
+#         author = request.form.get('author')
+#         price = request.form.get('price')
+#         img = request.file['image']
+#
+#     def add(self):
+#         return self.render('admin/import_detail.html')
 
 
 class ManagerView(ModelView):
