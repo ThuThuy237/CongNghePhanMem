@@ -46,8 +46,10 @@ def book_list():
     from_price = request.args.get('from_price')
     to_price = request.args.get('to_price')
     books = utils.read_books(cate_id=cat_id, kw=kw, from_price=from_price, to_price=to_price)
+    ut = utils
+    cate = utils.read_categories()
 
-    return render_template('list-book.html', books=books)
+    return render_template('list-book.html', books=books, ut=ut, cate=cate)
 
 
 @app.route('/api/cart', methods=["get", "post"])
@@ -72,7 +74,7 @@ def customer_cart():
             "quantity": 1
         }
 
-    session['mycart'] = customer_cart
+    session['customer_cart'] = customer_cart
 
     quan, price = utils.cart_stats(customer_cart)
 
@@ -91,8 +93,9 @@ def sellcart():
 
     data = request.json
     id = str(data.get("id"))
-    name = data.get("name")
-    price = data.get("price")
+    book = utils.get_book_by_id(id)
+    name = book.name
+    price = book.price
 
     if id in cart:
         cart[id]["quantity"] = cart[id]["quantity"] + 1
@@ -122,7 +125,6 @@ def buy_cart():
     buy_cart = session['buy_cart']
 
     data = request.json
-    # id = str(data.get("id"))
     name = data.get("name")
     price = data.get("price")
 

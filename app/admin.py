@@ -44,7 +44,8 @@ class SellView(BaseView):
     def book_by_cate_list(self):
         ut = utils
         cate = utils.read_categories()
-        return self.render('admin/sell.html', ut=ut, cate=cate)
+        customer = utils.read_customers()
+        return self.render('admin/sell.html', ut=ut, cate=cate, customer=customer)
 
     def add(self):
         return self.render('admin/sell.html')
