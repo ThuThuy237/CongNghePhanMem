@@ -22,7 +22,7 @@
     <div class="row form-group container">
         <label for="name">Tên Sách: <span class="red">*</span> </label>
         <select id="name" class="form-group col">
-            {% for p in ut.read_books() %}
+            {% for p in list_book %}
           <option name="{{p.price}}" value="{{p.id}}">{{p.name}}</option>
             {% endfor %}
         </select>
@@ -46,7 +46,7 @@
                 <div class="form-group">
                     <input type="number"
                            value="{{ p.quantity }}"
-                           class="form-control " id="{{ p.id }}" style="width: 100px;"/>
+                           class="form-control " onchange="changeQuantity()" id="quantity" style="width: 100px;"/>
                 </div>
             </td>
         </tr>
@@ -56,8 +56,8 @@
     </table>
     <h1 id="cart-info"></h1>
     <input type="button"
-           onclick="pay()"
-           value="Pay"
+           onclick="submitOder()"
+           value="Submit"
            class="btn btn-danger" />
 </div>
 

@@ -39,7 +39,11 @@ def log_out():
     return redirect('/admin')
 
 
-@app.route('/', methods=["get", "post"])
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/book-list', methods=["get", "post"])
 def book_list():
     cat_id = request.args.get('cat_id')
     kw = request.args.get('kw')
@@ -125,8 +129,11 @@ def buy_cart():
     buy_cart = session['buy_cart']
 
     data = request.json
-    name = data.get("name")
-    price = data.get("price")
+    id = str(data.get("id"))
+    quantity = str(data.get("quantity"))
+    book = utils.get_book_by_id(id)
+    name = book.name
+    price = book.import_price
 
     if id in buy_cart:
         buy_cart[id]["quantity"] = buy_cart[id]["quantity"] + 1
@@ -159,11 +166,20 @@ def payment():
                            cart_info=cart_info)
 
 
-@app.route('/api/pay', methods=['post'])
-def pay():
+@app.route('/api/submit-order', methods=['post'])
+def submit_order():
     if utils.add_order(session.get('cart')):
         del session['cart']
-        return jsonify({'message': 'Add receipt successful!'})
+        return jsonify({'message': 'Add order successful!'})
+
+    return jsonify({'message': 'failed'})
+
+
+@app.route('/api/submit-buy', methods=['post'])
+def submit_buy():
+    if utils.add_buy(session.get('buy_cart')):
+        del session['buy_cart']
+        return jsonify({'message': 'Add buy successful!'})
 
     return jsonify({'message': 'failed'})
 

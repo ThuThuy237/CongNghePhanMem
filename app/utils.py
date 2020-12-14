@@ -1,4 +1,7 @@
 import hashlib
+
+from flask import jsonify
+
 from app import utils
 from flask_login import current_user
 
@@ -36,8 +39,19 @@ def add_order(cart):
         quan, total = utils.cart_stats(cart)
         order = Order(emm_id=current_user.id, total=total, cus_id=1) # customerID đổi nếu có thời gian
         db.session.add(order)
+        # regu = Regulations.query.filter(Regulations.id == 1).first()
+        # import_min = regu.import_min
+        # inventory_max = regu.inventory_max
+        # apply = regu.active
 
         for p in list(cart.values()):
+
+            # book = get_book_by_id(p["id"])
+            # book_inventory = book.inventory
+
+            # if(apply):
+            #     ''' Sử dụng quy định về lượng sách nhập tối thiểu, lượng tồn tối đa'''
+            #     if()
             detail = OrderDetail(order=order,
                                  book_id=int(p["id"]),
                                  quantity=p["quantity"],
@@ -53,38 +67,31 @@ def add_order(cart):
     return False
 
 
-def add_buy(supplier, total):
-    if current_user.is_authenticated:
-        buy = Buy(emm_id=current_user.id, supplier_id=supplier, total=total)
+def add_buy(cart):
+    if cart and current_user.is_authenticated:
+        quan, total = utils.cart_stats(cart)
+        buy = Buy(emm_id=current_user.id, total=total)
         db.session.add(buy)
+        regu = Regulations.query.filter(Regulations.id == 1).first()
+        apply = regu.active
+
+        for p in list(cart.values()):
+            # if(apply):
+            #     book = get_book_by_id(p["id"])
+            #     if(p["quantity"] < regu.import_min and book.inventory >300):
+            #         return False
+            detail = BuyDetail(buy=buy,
+                                 book_id=int(p["id"]),
+                                 quantity=p["quantity"],
+                                 price=p["price"])
+            db.session.add(detail)
+
         try:
             db.session.commit()
             return True
         except Exception as ex:
             print(ex)
-
         return False
-
-
-# def add_buy_detail(name, quantity, price, category, author, img):
-#     if current_user.is_authenticated:
-#         buy_detail = BuyDetail(emm_id=current_user.id, supplier_id=supplier)
-#         db.session.add(order)
-#
-#         for p in list(cart.values()):
-#             detail = OrderDetail(order=order,
-#                                  book_id=int(p["id"]),
-#                                  quantity=p["quantity"],
-#                                  price=p["price"])
-#             db.session.add(detail)
-#
-#         try:
-#             db.session.commit()
-#             return True
-#         except Exception as ex:
-#             print(ex)
-#
-#     return False
 
 
 def get_cate_by_id(id=None):

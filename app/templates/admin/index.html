@@ -10,39 +10,6 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}'
 
-{% block head %}
-<div class="container">
-    <a class="TTlogo" href="#">T&T <span class="bookstore">Bookstore</span></a>
-    <h2 class="right"> In books lies the soul of the whole past time</h2>
-</div>
-{% endblock %}'
-
-{% block menu_links %}
-    {% if current_user.is_authenticated %}
-        <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
-                <div class="divava">
-                    <img class="ava" src="{{current_user.avatar }}"/>
-                </div>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right info">
-                <div class="divavazoom">
-                    <img class="ava" src="{{ current_user.avatar }}"/>
-                </div>
-                <span class="dropdown-item-text">
-                    {{current_user.employee.name}}
-                </span>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item-text" href="/logout">Log out</a>
-            </div>
-        </div>
-    {% endif %}
-{% endblock %}'
-
-{% block brand %}
-<i class="fas fa-book iconbar"></i>
-{% endblock %}'
-
 {% block body %}
 {% if current_user.is_authenticated %}
 <h1 class="text-center text-success">Wellcom to T&T bookstore</h1>

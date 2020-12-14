@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey, Enum
+from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey, Enum, Numeric, Boolean, Date
 from sqlalchemy.orm import relationship, backref
 from app import db
 from flask_login import UserMixin
@@ -11,7 +10,7 @@ class InforBase(db.Model):
     __abstract__ = True
 
     id = Column(Integer, nullable=False, autoincrement=True, primary_key=True)
-    name = Column(String(50), nullable=False)
+    name = Column(String(150), nullable=False)
 
 
 class UserBase(InforBase):
@@ -27,6 +26,9 @@ class Customer(UserBase):
     __tablename__ = 'customer'
 
     order = relationship('Order', backref='customer', lazy=True)
+    collect_debts = relationship('CollectDebts', backref='customer', lazy=True)  #phieu thu no
+    debt = relationship('Debtor', backref='custome', lazy=True)  # tong tien no
+    debt_report = relationship('DebtReport', backref='customer', lazy=True)
 
     def __str__(self):
         return self.name
@@ -67,6 +69,7 @@ class Login(db.Model, UserMixin):
     email = Column(String(50), nullable=False)
     avatar = Column(String(100))
     login_role = Column(Enum(LoginRole), default=LoginRole.USER)
+    reg = relationship('Regulations', backref="login", lazy=True)
 
     def __str__(self):
         return self.employee.name
@@ -171,6 +174,55 @@ class BuyDetail(db.Model):
     buy_id = Column(Integer, ForeignKey(Buy.id))
     quantity = Column(Integer, nullable=False)
     price = Column(Integer, nullable=False)
+
+
+#quy dinh
+class Regulations(db.Model):
+    __tablename__ = 'regulations'
+
+    id = Column(Integer, nullable=False, default=1)
+    import_min = Column(Integer, nullable=True, default=150)
+    inventory_min_when_import = Column(Integer, nullable=True, default=300)
+    inventory_min_when_sell = Column(Integer, nullable=True, default=20)
+    debt_max = Column(Numeric, nullable=True, default=20000)
+    active = Column(Boolean, default=True)
+    id_user = Column(Integer, ForeignKey(Login.id),primary_key=True, nullable=False)
+
+
+#so luong sach ton
+class InventoryReport(db.Model):
+    __tablename__ = "inventory_report"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    inventory_befor = Column(Numeric, nullable=False) #ton dau
+    incurred = Column(Numeric, nullable=False)  #phat sinh
+    inventory_after = Column(Numeric, nullable=False) # ton cuoi
+    book_id = Column(Integer, ForeignKey(Books.id), nullable=False)
+
+
+# PhieuThuTienNo
+class CollectDebts(db.Model):
+    __tablename__ = "collect_debts"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    date = Column(DateTime, default=datetime.today())
+    total = Column(Float, nullable=False)
+    cus_id = Column(Integer, ForeignKey(Customer.id), nullable=False)
+
+
+# BaoCaoCongNo
+class DebtReport(db.Model):
+    __tablename__ = "debt_report"
+    id = Column(Integer, primary_key=True,autoincrement=True)
+    month = Column(Date, nullable=False)
+    debt_after = Column(Numeric, nullable=False)
+    incurred = Column(Numeric, nullable=False)
+    cus_id = Column(Integer, ForeignKey(Customer.id), nullable=False)
+
+
+class Debtor(db.Model):
+    __tablename__ = "KhachHangNo"
+    debt_date = Column(DateTime, default= datetime.today())
+    total = Column(Float, nullable=False)
+    Customer_id = Column(Integer, ForeignKey(Customer.id), primary_key=True, nullable=False)
 
 
 if __name__ == '__main__':

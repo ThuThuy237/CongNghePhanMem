@@ -1,96 +1,61 @@
 {% extends 'admin/index.html' %}
 {% block body %}
-{% if name %}
-<div class="alert alert-success"> SUPPLIER:
-    {{ name }}
-</div>
-{% endif %}
-{% if current_user.is_authenticated %}
-<h1 class="text-info text-center">ADD BOOK TO BUY-DETAIL</h1>
-<form method="post"
-      action=""
-      enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="supplier">Supplier </label>
-        <datalist id="name-of-supplier">
-            {% for p in supp %}
-            <option value="{{ p.name }}">
-                {% endfor %}
-        </datalist>
-        <input list="name-of-supplier"
-               autocomplete="on"
-               required
-               id="supplier"
-               name="supplier"
-               class="form-control"/>
-    </div>
-    <div class="form-group">
-        <label for="name">Name </label>
-        <datalist id="name-of-book">
+{% endblock %}
+{% block tail %}
+<body>
+<div class="container">
+    <h1 class="text-center text-info">PHIẾU NHẬP SÁCH  </h1>
+    <label for="supplier">Tên Nhà Cung Cấp <span class="red">*</span></label>
+    <select id="supplier" class="form-control" name="supplier">
+            {% for s in supplier %}
+          <option name="{{s.price}}" value="{{s.id}}" selected="{{s.id}}">{{s.name}}</option>
+            {% endfor %}
+        </select>
+    <br><label>Ngày bán <span class="red">*</span></label>
+    <input type="datetime-local" id="date" name="date"/><br><br>
+    <div class="row form-group container">
+        <label for="name">Tên Sách: <span class="red">*</span> </label>
+        <select id="name" class="form-group col">
             {% for p in list_book %}
-            <option value="{{ p.name }}">
-                {% endfor %}
-        </datalist>
-        <input list="name-of-book"
-               autocomplete="on"
-               required
-               id="name"
-               name="name"
-               class="form-control"/>
+          <option name="{{p.price}}" value="{{p.id}}">{{p.name}}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" id="submit", name="submit", value="Thêm" class="form-group col-sm-1" onclick="addToBuy()">
     </div>
-    <datalist id="list-of-cate">
-        {% for p in cate %}
-        <option value="{{ p.name }}">{{ p.name }}</option>
+
+    <table class="table" id="new-product">
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>PRICE</th>
+            <th>QUANTITY</th>
+        </tr>
+        {% if 'buy_cart' in session %}
+        {% for p in session['buy_cart'].values() %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.price }}</td>
+            <td>
+                <div class="form-group">
+                    <input type="number"
+                           value="{{ p.quantity }}"
+                           class="form-control " id="{{ p.id }}" style="width: 100px;"/>
+                </div>
+            </td>
+        </tr>
         {% endfor %}
-    </datalist>
-    <div class="form-group">
-        <label for="quantity">Quantity </label>
-        <input type="number "
-               required
-               id="quantity"
-               name="quantity"
-               class="form-control"/>
-    </div>
-    <div class="form-group">
-            <label for="category">Category</label>
-            <input list="list-of-cate" name="category" id="category" class="form-control" required/>
-        </div>
-        <div class="form-group">
-            <label for="author">Author</label>
-            <input type="text"
-                   required
-                   autocomplete="on"
-                   id="author"
-                   name="author"
-                   class="form-control"/>
-        </div>
-        <div class="form-group">
-            <label for="price">Price </label>
-            <input type="number "
-                   required
-                   id="price"
-                   name="price"
-                   class="form-control"/>
-        </div>
-        <div class="form-group">
-            <label for="image">Image </label>
-            <input type="file"
-                   required
-                   id="image"
-                   name="image"
-                   class="form-control"/>
-        </div>
-    <div id="hide-if-old"></div>
-    <div class="form-group">
-        <lable class="btn btn-danger">ADD BOOK</lable>
-        <input type="submit" value="COMPLETE" class="btn btn-danger"/>
-    </div>
-</form>
-<h1 class="cart-info"></h1>
-{% else %}
-{% include 'admin/login.html' %}
-{% endif %}
+        {% else %}
+        {% endif %}
+    </table>
+    <h1 id="cart-info"></h1>
+    <input type="button"
+           onclick="submitBuy()"
+           value="Pay"
+           class="btn btn-danger" />
+</div>
+
+</body>
+
+
 {% endblock %}'
-
-
-

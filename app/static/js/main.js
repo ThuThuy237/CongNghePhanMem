@@ -20,9 +20,8 @@ function addToCart(id, name, price) {
     // promise --> await/async
 }
 
+function getQuantity(){
 
-function getValue(id){
-    return document.getElementById(id).value;
 }
 
 function addToSell() {
@@ -38,7 +37,6 @@ function addToSell() {
     }).then(res => res.json()).then(data => {
         console.info(data);
         location.reload();
-//
         var value = parseInt(document.getElementById(id ).value) ;
         document.getElementById(id ).value = value + 1;
     }).catch(err => {
@@ -48,21 +46,20 @@ function addToSell() {
     // promise --> await/async
 }
 
-function addToBuy(id, name, price) {
-    fetch('/api/buycart', {
+
+function addToBuy() {
+    id = document.getElementById("name").value;
+    fetch('/api/buy-cart', {
         method: "post",
         body: JSON.stringify({
-            "id": id,
-            "name": name,
-            "price": price
+            "id": id
         }),
         headers: {
             'Content-Type': 'application/json'
         }
     }).then(res => res.json()).then(data => {
         console.info(data);
-        var cart = document.getElementById("cart-info");
-        cart.innerText = `${data.total_quantity} - ${data.total_amount} VNĐ`;
+        location.reload();
     }).catch(err => {
         console.log(err);
     })
@@ -71,8 +68,8 @@ function addToBuy(id, name, price) {
 }
 
 
-function pay() {
-    fetch('/api/pay', {
+function submitOder() {
+    fetch('/api/submit-order', {
         method: "post",
         headers: {
             'Content-Type': 'application/json'
@@ -82,39 +79,21 @@ function pay() {
         location.reload();
     }).catch(err => {
         console.log(err);
-//        location.href = '/';
     })
 }
 
 
-//function add_book() {
-//    var supplier = document.getElementById("supplier").value;
-//    var name = document.getElementById("name").value;
-//    var author = document.getElementById("author").value;
-//    var category = document.getElementById("category").value;
-//    var price = document.getElementById("price").value;
-//    var image = document.getElementById("image").value;
-//
-//    fetch('/api/buy-cart', {
-////        method: "post",
-//        body: JSON.stringify({
-//            "supplier": supplier,
-////            "id": id,
-//            "name": name,
-//            "author": author,
-//            "category": category,
-//            "price": price
-//        }),
-//        headers: {
-//            'Content-Type': 'application/json'
-//        }
-//    }).then(res => res.json()).then(data => {
-//        console.info(data);
-//        var cart = document.getElementById("cart-info");
-//        cart.innerText = `${data.total_quantity} - ${data.total_amount} VNĐ`;
-//    }).catch(err => {
-//        console.log(err);
-//    })
-//
-//}
+function submitBuy() {
+    fetch('/api/submit-buy', {
+        method: "post",
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(res => res.json()).then(data => {
+        alert(data.message);
+        location.reload();
+    }).catch(err => {
+        console.log(err);
+    })
+}
 
