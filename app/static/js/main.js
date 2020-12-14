@@ -122,42 +122,35 @@ function pay() {
     })
 }
 
-function show(){
-    if($("input[id='new']:checked")){
-        document.getElementById("hide-if-old").innerHTML = `<div class="form-group">
-            <label for="category">Category</label>
-            <input list="list-of-cate" name="category" id="category" class="form-control" required/>
-        </div>
-        <div class="form-group">
-            <label for="author">Author</label>
-            <input type="text"
-                   required
-                   autocomplete="on"
-                   id="author"
-                   name="author"
-                   class="form-control"/>
-        </div>
-        <div class="form-group">
-            <label for="quantity">Price </label>
-            <input type="number "
-                   required
-                   id="price"
-                   name="price"
-                   class="form-control"/>
-        </div>
-        <div class="form-group">
-            <label for="image">Image </label>
-            <input type="file"
-                   required
-                   id="image"
-                   name="image"
-                   class="form-control"/>
-        </div>`
-    }
+
+function add_book() {
+    var supplier = document.getElementById("supplier").value;
+    var name = document.getElementById("name").value;
+    var author = document.getElementById("author").value;
+    var category = document.getElementById("category").value;
+    var price = document.getElementById("price").value;
+    var image = document.getElementById("image").value;
+
+    fetch('/api/buy-cart', {
+//        method: "post",
+        body: JSON.stringify({
+            "supplier": supplier,
+//            "id": id,
+            "name": name,
+            "author": author,
+            "category": category,
+            "price": price
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(res => res.json()).then(data => {
+        console.info(data);
+        var cart = document.getElementById("cart-info");
+        cart.innerText = `${data.total_quantity} - ${data.total_amount} VNĐ`;
+    }).catch(err => {
+        console.log(err);
+    })
+
 }
 
-function hide(){
-    if($("input[id='old']:checked")){
-        document.getElementById("hide-if-old").innerHTML =`` ;
-    }
-}

@@ -5,7 +5,7 @@ from app import admin, app, utils, db
 from flask import redirect, request, session, jsonify
 from flask_login import current_user
 
-from app.models import Employee, Login, Supplier, Publisher, Categories, LoginRole
+from app.models import Employee, Login, Supplier, Publisher, Categories, LoginRole, Books
 
 
 class AddUserView(BaseView):
@@ -54,16 +54,11 @@ class ImportView(BaseView):
     @expose('/', methods=['get', 'post'])
     def imp(self):
         supp = utils.read_supplier()
-        # chuyển qua trang import_detail nếu method = post
-        if request.method == 'POST':
-            list_book = utils.read_books()
-            cate = utils.read_categories()
-            return self.render('admin/import_detail.html', list_book=list_book, cate=cate)
-        return self.render('admin/import.html', supp=supp)
-
-    def buy(self):
+        list_book = utils.read_books()
+        cate = utils.read_categories()
         supplier = request.form.get('supplier')
-        total = request.form.get('total')
+        return self.render('admin/import.html', supp=supp, list_book=list_book, cate=cate)
+
 
     def add(self):
         return self.render('admin/import.html')
@@ -74,7 +69,7 @@ class ImportView(BaseView):
 #         list_book = utils.read_books()
 #         cate = utils.read_categories()
 #         supp = utils.read_supplier()
-#         return self.render('admin/import_detail.html', list_book=list_book, cate=cate, supp=supp)
+#         return self.render('admin/import.html', list_book=list_book, cate=cate, supp=supp)
 #
 #     def iport_book(self):
 #         name = request.form.get('name')
@@ -85,7 +80,7 @@ class ImportView(BaseView):
 #         img = request.file['image']
 #
 #     def add(self):
-#         return self.render('admin/import_detail.html')
+#         return self.render('admin/import.html')
 
 
 class ManagerView(ModelView):
@@ -107,4 +102,4 @@ admin.add_view(ManagerView(Login, db.session))
 admin.add_view(ManagerView(Employee, db.session))
 admin.add_view(ManagerView(Supplier, db.session))
 admin.add_view(ManagerView(Publisher, db.session))
-admin.add_view(ManagerView(Categories, db.session))
+admin.add_view(ManagerView(Books, db.session))

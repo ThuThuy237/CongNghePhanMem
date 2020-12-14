@@ -51,30 +51,30 @@ def book_list():
 
 
 @app.route('/api/cart', methods=["get", "post"])
-def mycart():
-    if 'mycart' not in session:
-        session['mycart'] = {}
+def customer_cart():
+    if 'customer_cart' not in session:
+        session['customer_cart'] = {}
 
-    mycart = session['mycart']
+    customer_cart = session['customer_cart']
 
     data = request.json
     id = str(data.get("id"))
     name = data.get("name")
     price = data.get("price")
 
-    if id in mycart:
-        mycart[id]["quantity"] = mycart[id]["quantity"] + 1
+    if id in customer_cart:
+        customer_cart[id]["quantity"] = customer_cart[id]["quantity"] + 1
     else:
-        mycart[id] = {
+        customer_cart[id] = {
             "id": id,
             "name": name,
             "price": price,
             "quantity": 1
         }
 
-    session['mycart'] = mycart
+    session['mycart'] = customer_cart
 
-    quan, price = utils.cart_stats(mycart)
+    quan, price = utils.cart_stats(customer_cart)
 
     return jsonify({
         "total_amount": price,
@@ -114,31 +114,31 @@ def sellcart():
     })
 
 
-@app.route('/api/buycart', methods=["get", "post"])
-def buycart():
-    if 'buycart' not in session:
-        session['buycart'] = {}
+@app.route('/api/buy-cart', methods=["get", "post"])
+def buy_cart():
+    if 'buy_cart' not in session:
+        session['buy_cart'] = {}
 
-    buycart = session['buycart']
+    buy_cart = session['buy_cart']
 
     data = request.json
-    id = str(data.get("id"))
+    # id = str(data.get("id"))
     name = data.get("name")
     price = data.get("price")
 
-    if id in buycart:
-        buycart[id]["quantity"] = buycart[id]["quantity"] + 1
+    if id in buy_cart:
+        buy_cart[id]["quantity"] = buy_cart[id]["quantity"] + 1
     else:
-        buycart[id] = {
+        buy_cart[id] = {
             "id": id,
             "name": name,
             "price": price,
             "quantity": 1
         }
 
-    session['buycart'] = buycart
+    session['buy_cart'] = buy_cart
 
-    quan, price = utils.cart_stats(buycart)
+    quan, price = utils.cart_stats(buy_cart)
 
     return jsonify({
         "total_amount": price,

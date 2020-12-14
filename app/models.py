@@ -111,8 +111,9 @@ class Books(InforBase):
 
     author = Column(String(50), nullable=False)  # Tác gia
     inventory = Column(Integer, nullable=False)  # lượng hàng
-    price = Column(Float, nullable=False)  # Gia
-    image = Column(String(100))  # Hinh anh
+    import_price = Column(Float, nullable=False) # Gia nhap
+    price = Column(Float, default=import_price + import_price * 0.25)  # Gia ban
+    image = Column(String(300))  # Hinh anh
     cat_id = Column(Integer, ForeignKey(Categories.id), nullable=False)
     publisher_id = Column(Integer, ForeignKey(Publisher.id), nullable=False)
 
