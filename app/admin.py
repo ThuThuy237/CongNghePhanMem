@@ -48,7 +48,7 @@ class SellView(BaseView):
         customer = utils.read_customers()
         date_sell = datetime.datetime.now()
         date_sell = date_sell.strftime("%d - %B - %Y")
-        return self.render('admin/sell.html', list_book=list_book, customer=customer, date=date_sell)
+        return self.render('admin/sell.html', list_book=list_book, customer=customer, date_sell=date_sell)
 
 
 class ImportView(BaseView):
@@ -58,7 +58,7 @@ class ImportView(BaseView):
         supplier = utils.read_supplier()
         date_buy = datetime.datetime.now()
         date_buy = date_buy.strftime("%d - %B - %Y")
-        return self.render('admin/import.html', list_book=list_book, supplier=supplier, date=date_buy)
+        return self.render('admin/import.html', list_book=list_book, supplier=supplier, date_buy=date_buy)
 
     def add(self):
         return self.render('admin/import.html')
@@ -107,6 +107,8 @@ class LogoutView(BaseView):
     def is_accessible(self):
         return current_user.is_authenticated
 
+
+admin.add_view(CollectDebtView(name="Collect Debt"))
 admin.add_view(SellView(name="Sell"))
 admin.add_view(ImportView(name="Import"))
 admin.add_view(ManagerView(Login, db.session))

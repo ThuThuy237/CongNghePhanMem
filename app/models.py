@@ -186,7 +186,7 @@ class Regulations(db.Model):
     inventory_min_when_sell = Column(Integer, nullable=True, default=20)
     debt_max = Column(Numeric, nullable=True, default=20000)
     active = Column(Boolean, default=True)
-    id_user = Column(Integer, ForeignKey(Login.id),primary_key=True, nullable=False)
+    id_user = Column(Integer, ForeignKey(Login.id), primary_key=True, nullable=False)
 
 
 #so luong sach ton
@@ -223,6 +223,9 @@ class Debtor(db.Model):
     debt_date = Column(DateTime, default= modelDateTime.today())
     total = Column(Float, nullable=False)
     Customer_id = Column(Integer, ForeignKey(Customer.id), primary_key=True, nullable=False)
+
+    def __str__(self):
+        return self.total
 
 
 if __name__ == '__main__':

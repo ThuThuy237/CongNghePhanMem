@@ -157,6 +157,7 @@ def buy_cart():
     quan, price, sup_id = utils.buy_cart_stats(buy_cart)
 
     return jsonify({
+        "buy_cart": buy_cart,
         "total_amount": price,
         "total_quantity": quan
     })

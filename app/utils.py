@@ -46,8 +46,8 @@ def add_order(cart):
         for p in list(cart.values()):
             book = get_book_by_id(p["id"])
             db.session.query(Books).filter(Books.id == p["id"]).update({'inventory': Books.inventory - p["quantity"]})
-            # if (customer.debt > regu.debt_max) and ((book.inventory - p["quantity"]) < regu.inventory_min_when_sell):
-            #     return False
+            if (customer.debt[0].total > regu.debt_max) or ((book.inventory - p["quantity"]) < regu.inventory_min_when_sell):
+                return False
             detail = OrderDetail(order=order,
                                  book_id=int(p["id"]),
                                  quantity=p["quantity"],
@@ -73,8 +73,8 @@ def add_buy(cart):
         for p in list(cart.values()):
             book = get_book_by_id(p["id"])
             db.session.query(Books).filter(Books.id == p["id"]).update({'inventory': Books.inventory + p["quantity"]})
-            # if (p["quantity"] < regu.import_min) or (book.inventory > regu.inventory_max_when_import) :
-            #     return False
+            if (p["quantity"] < regu.import_min) or (book.inventory > regu.inventory_max_when_import) :
+                return False
             detail = BuyDetail(buy=buy,
                                book_id=int(p["id"]),
                                quantity=p["quantity"],
