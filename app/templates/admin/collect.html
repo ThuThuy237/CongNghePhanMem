@@ -1,0 +1,34 @@
+{% extends 'admin/index.html' %}
+{% block body %}
+{% endblock %}
+{% block tail %}
+<body>
+<div class="container">
+    <h1 class="text-center text-info">COLLECT DEBT FORM</h1>
+    {% if date_sell %}
+        <div class="right">
+            <label>Date: </label>
+            <input id="date" name="date" value="{{date_sell}}" readonly/><br>
+        </div>
+    {% endif %}
+    <div class="from-group " >
+         <label for="customer">Customer name: <span class="red">*</span></label>
+        <select id="customer" class="form-control" >
+            {% for c in customer %}
+            <option value="{{c.id}}" >{{c.name}}</option>
+            {% endfor %}
+        </select><br>
+    </div>
+    <div class="form-group">
+        <input type="number" id="total" name="total" >
+    </div>
+    <input type="button"
+           onclick="submitOder()"
+           value="SUBMIT"
+           class="btn btn-danger" />
+</div>
+
+</body>
+
+
+{% endblock %}'

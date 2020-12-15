@@ -41,7 +41,10 @@ def log_out():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    books = utils.read_books()
+    ut = utils
+    cate = utils.read_categories()
+    return render_template('index.html', books=books, ut=ut, cate=cate)
 
 @app.route('/book-list', methods=["get", "post"])
 def book_list():
@@ -97,6 +100,7 @@ def sellcart():
 
     data = request.json
     id = str(data.get("id"))
+    cus_id = str(data.get("cus_id"))
     book = utils.get_book_by_id(id)
     name = book.name
     price = book.price
@@ -105,6 +109,7 @@ def sellcart():
         cart[id]["quantity"] = cart[id]["quantity"] + 1
     else:
         cart[id] = {
+            "cus_id": cus_id,
             "id": id,
             "name": name,
             "price": price,
@@ -113,7 +118,7 @@ def sellcart():
 
     session['cart'] = cart
 
-    quan, price = utils.cart_stats(cart)
+    quan, price, cus_id = utils.sell_cart_stats(cart)
 
     return jsonify({
         "total_amount": price,
@@ -130,6 +135,7 @@ def buy_cart():
 
     data = request.json
     id = str(data.get("id"))
+    sup_id = str(data.get("sup_id"))
     quantity = str(data.get("quantity"))
     book = utils.get_book_by_id(id)
     name = book.name
@@ -140,6 +146,7 @@ def buy_cart():
     else:
         buy_cart[id] = {
             "id": id,
+            "sup_id": sup_id,
             "name": name,
             "price": price,
             "quantity": 1
@@ -147,7 +154,7 @@ def buy_cart():
 
     session['buy_cart'] = buy_cart
 
-    quan, price = utils.cart_stats(buy_cart)
+    quan, price, sup_id = utils.buy_cart_stats(buy_cart)
 
     return jsonify({
         "total_amount": price,

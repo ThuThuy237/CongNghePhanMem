@@ -4,23 +4,35 @@
 {% block tail %}
 <body>
 <div class="container">
-    <h1 class="text-center text-info">PHIẾU NHẬP SÁCH  </h1>
-    <label for="supplier">Tên Nhà Cung Cấp <span class="red">*</span></label>
-    <select id="supplier" class="form-control" name="supplier">
+    <h1 class="text-center text-info">FORM IMPORT</h1>
+    {% if date_buy %}
+       <div class="right">
+            <label>Date: </label>
+            <input id="date" name="date" value="{{date_buy}}" readonly/><br>
+        </div>
+    {% endif %}
+    <div class="from-group ">
+        <label for="supplier">Supplier: <span class="red">*</span></label>
+        <select id="supplier" class="form-control" name="supplier">
             {% for s in supplier %}
-          <option name="{{s.price}}" value="{{s.id}}" selected="{{s.id}}">{{s.name}}</option>
+            <option name="{{s.price}}" value="{{s.id}}">{{s.name}}</option>
             {% endfor %}
         </select>
-    <br><label>Ngày bán <span class="red">*</span></label>
-    <input type="datetime-local" id="date" name="date"/><br><br>
-    <div class="row form-group container">
-        <label for="name">Tên Sách: <span class="red">*</span> </label>
-        <select id="name" class="form-group col">
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="name">Book: <span class="red">*</span> </label>
+        <select id="name" class="form-control">
             {% for p in list_book %}
           <option name="{{p.price}}" value="{{p.id}}">{{p.name}}</option>
             {% endfor %}
         </select>
-        <input type="submit" id="submit", name="submit", value="Thêm" class="form-group col-sm-1" onclick="addToBuy()">
+        <input type="submit"
+               id="submit"
+               name="submit"
+               value="Add Book"
+               class="form-group col-sm-1"
+               onclick="addToBuy()">
     </div>
 
     <table class="table" id="new-product">
@@ -48,10 +60,9 @@
         {% else %}
         {% endif %}
     </table>
-    <h1 id="cart-info"></h1>
     <input type="button"
            onclick="submitBuy()"
-           value="Pay"
+           value="SUBMIT"
            class="btn btn-danger" />
 </div>
 

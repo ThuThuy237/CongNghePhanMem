@@ -4,29 +4,29 @@
 {% block tail %}
 <body>
 <div class="container">
-    <h1 class="text-center text-info">Hóa đơn bán sách </h1>
-    <label for="customer">Tên Khách Hàng <span class="red">*</span></label>
-    <datalist id="list-customer">
+    <h1 class="text-center text-info">ORDER FORM</h1>
+    {% if date_sell %}
+        <div class="right">
+            <label>Date: </label>
+            <input id="date" name="date" value="{{date_sell}}" readonly/><br>
+        </div>
+    {% endif %}
+    <div class="from-group " >
+         <label for="customer">Customer name: <span class="red">*</span></label>
+        <select id="customer" class="form-control" >
             {% for c in customer %}
-            <option value="{{ c.name }}">
-                {% endfor %}
-        </datalist>
-        <input list="list-customer"
-               autocomplete="on"
-               required
-               id="customer"
-               name="customer"
-               class="form-control"/>
-    <br><label>Ngày bán <span class="red">*</span></label>
-    <input type="datetime-local" id="date" name="date"/><br><br>
-    <div class="row form-group container">
-        <label for="name">Tên Sách: <span class="red">*</span> </label>
-        <select id="name" class="form-group col">
+            <option value="{{c.id}}" >{{c.name}}</option>
+            {% endfor %}
+        </select><br>
+    </div>
+    <div class="form-group">
+        <label for="name">Book: <span class="red">*</span> </label>
+        <select id="name" class="form-control">
             {% for p in list_book %}
           <option name="{{p.price}}" value="{{p.id}}">{{p.name}}</option>
             {% endfor %}
         </select>
-        <input type="submit" id="submit", name="submit", value="Thêm" class="form-group col-sm-1" onclick="addToSell()">
+        <input type="submit" id="submit" name="submit" value="Add Book" onclick="addToSell()">
     </div>
 
     <table class="table" id="new-product">
@@ -46,7 +46,7 @@
                 <div class="form-group">
                     <input type="number"
                            value="{{ p.quantity }}"
-                           class="form-control " onchange="changeQuantity()" id="quantity" style="width: 100px;"/>
+                           class="form-control " onchange="changeQuantity()" id="{{ p.id }}" style="width: 100px;"/>
                 </div>
             </td>
         </tr>
@@ -54,10 +54,9 @@
         {% else %}
         {% endif %}
     </table>
-    <h1 id="cart-info"></h1>
     <input type="button"
            onclick="submitOder()"
-           value="Submit"
+           value="SUBMIT"
            class="btn btn-danger" />
 </div>
 

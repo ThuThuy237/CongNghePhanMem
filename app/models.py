@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime as modelDateTime
 from sqlalchemy import Column, Integer, DateTime, Float, String, ForeignKey, Enum, Numeric, Boolean, Date
 from sqlalchemy.orm import relationship, backref
 from app import db
@@ -27,7 +27,7 @@ class Customer(UserBase):
 
     order = relationship('Order', backref='customer', lazy=True)
     collect_debts = relationship('CollectDebts', backref='customer', lazy=True)  #phieu thu no
-    debt = relationship('Debtor', backref='custome', lazy=True)  # tong tien no
+    debt = relationship('Debtor', backref='customer', lazy=True)  # tong tien no
     debt_report = relationship('DebtReport', backref='customer', lazy=True)
 
     def __str__(self):
@@ -128,7 +128,7 @@ class Order(db.Model):
     __tablename__ = 'order'
 
     id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
-    date = Column(DateTime, nullable=False, default=datetime.today())
+    date = Column(DateTime, nullable=False, default=modelDateTime.today())
     total = Column(Float, nullable=False)
     emm_id = Column(Integer, ForeignKey(Employee.id), nullable=False)
     cus_id = Column(Integer, ForeignKey(Customer.id))
@@ -156,7 +156,7 @@ class OrderDetail(db.Model):
 class Buy(db.Model):
     __tablename__ = 'buy'
     id = Column(Integer, autoincrement=True, primary_key=True)
-    date = Column(DateTime, default=datetime.today())
+    date = Column(DateTime, default=modelDateTime.today())
     total = Column(Float, nullable=False)
     supplier_id = Column(Integer, ForeignKey(Supplier.id))
     emm_id = Column(Integer, ForeignKey(Employee.id), nullable=False)
@@ -182,7 +182,7 @@ class Regulations(db.Model):
 
     id = Column(Integer, nullable=False, default=1)
     import_min = Column(Integer, nullable=True, default=150)
-    inventory_min_when_import = Column(Integer, nullable=True, default=300)
+    inventory_max_when_import = Column(Integer, nullable=True, default=300)
     inventory_min_when_sell = Column(Integer, nullable=True, default=20)
     debt_max = Column(Numeric, nullable=True, default=20000)
     active = Column(Boolean, default=True)
@@ -203,7 +203,7 @@ class InventoryReport(db.Model):
 class CollectDebts(db.Model):
     __tablename__ = "collect_debts"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    date = Column(DateTime, default=datetime.today())
+    date = Column(DateTime, default=modelDateTime.today())
     total = Column(Float, nullable=False)
     cus_id = Column(Integer, ForeignKey(Customer.id), nullable=False)
 
@@ -219,8 +219,8 @@ class DebtReport(db.Model):
 
 
 class Debtor(db.Model):
-    __tablename__ = "KhachHangNo"
-    debt_date = Column(DateTime, default= datetime.today())
+    __tablename__ = "debtor"
+    debt_date = Column(DateTime, default= modelDateTime.today())
     total = Column(Float, nullable=False)
     Customer_id = Column(Integer, ForeignKey(Customer.id), primary_key=True, nullable=False)
 

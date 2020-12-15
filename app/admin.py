@@ -1,12 +1,13 @@
 import os
+import datetime
 from flask_admin import BaseView, expose
 from flask_admin.model.template import macro
 from flask_admin.contrib.sqla import ModelView
 from app import admin, app, utils, db
-from flask import redirect, request
+from flask import redirect, request, session
 from flask_login import current_user, logout_user
-
-from app.models import Employee, Login, Supplier, Publisher, Categories, LoginRole, Books, Regulations
+from app.models import *
+# from app.models import Employee, Login, Supplier, Publisher, Categories, LoginRole, Books, Regulations, Debtor
 
 
 # class AddUserView(BaseView):
@@ -44,21 +45,35 @@ class SellView(BaseView):
     @expose('/', methods=['get', 'post'])
     def book_by_cate_list(self):
         list_book = utils.read_books()
-        cate = utils.read_categories()
         customer = utils.read_customers()
-        return self.render('admin/sell.html', list_book=list_book, cate=cate, customer=customer)
+        date_sell = datetime.datetime.now()
+        date_sell = date_sell.strftime("%d - %B - %Y")
+        return self.render('admin/sell.html', list_book=list_book, customer=customer, date=date_sell)
 
 
 class ImportView(BaseView):
     @expose('/', methods=['get', 'post'])
     def imp(self):
         list_book = utils.read_books()
-        cate = utils.read_categories()
         supplier = utils.read_supplier()
-        return self.render('admin/import.html', list_book=list_book, cate=cate, supplier=supplier)
+        date_buy = datetime.datetime.now()
+        date_buy = date_buy.strftime("%d - %B - %Y")
+        return self.render('admin/import.html', list_book=list_book, supplier=supplier, date=date_buy)
 
     def add(self):
         return self.render('admin/import.html')
+
+
+class CollectDebtView(BaseView):
+    @expose('/', methods=['get', 'post'])
+    def imp(self):
+        customer = utils.read_customers()
+        date_collect = datetime.datetime.now()
+        date_collect = date_collect.strftime("%d - %B - %Y")
+        return self.render('admin/collect.html', customer=customer, date=date_collect)
+
+    def add(self):
+        return self.render('admin/collect.html')
 
 
 class ManagerView(ModelView):
@@ -76,13 +91,16 @@ class ChangeRegulateView(ManagerView):
     can_create = False
     can_delete = False
     can_edit = False
-    column_editable_list = ['inventory_min_when_import', 'inventory_min_when_sell', 'import_min', 'debt_max', 'active']
+    column_editable_list = ['inventory_max_when_import', 'inventory_min_when_sell', 'import_min', 'debt_max', 'active']
     column_exclude_list = ('login')
 
 
 class LogoutView(BaseView):
     @expose('/')
     def __index__(self):
+        user = current_user
+        user.authenticated = False
+        session.clear()
         logout_user()
         return redirect('/admin')
 
@@ -93,9 +111,11 @@ admin.add_view(SellView(name="Sell"))
 admin.add_view(ImportView(name="Import"))
 admin.add_view(ManagerView(Login, db.session))
 admin.add_view(ManagerView(Employee, db.session))
-admin.add_view(ManagerView(Supplier, db.session))
+admin.add_view(ManagerView(DebtReport, db.session))
 admin.add_view(ManagerView(Publisher, db.session))
 admin.add_view(ManagerView(Books, db.session))
 admin.add_view(ManagerView(Categories, db.session))
+admin.add_view(ManagerView(Debtor, db.session))
+admin.add_view(ManagerView(Customer, db.session))
 admin.add_view(ChangeRegulateView(Regulations, db.session))
 admin.add_view(LogoutView(name='Log Out'))

@@ -1,6 +1,7 @@
 import hashlib
 
 from flask import jsonify
+from sqlalchemy.orm.sync import update
 
 from app import utils
 from flask_login import current_user
@@ -36,22 +37,17 @@ def get_user_by_id(user_id):
 
 def add_order(cart):
     if cart and current_user.is_authenticated:
-        quan, total = utils.cart_stats(cart)
-        order = Order(emm_id=current_user.id, total=total, cus_id=1) # customerID đổi nếu có thời gian
+        quan, total, cus_id = utils.sell_cart_stats(cart)
+        order = Order(emm_id=current_user.id, total=total, cus_id=cus_id)
         db.session.add(order)
-        # regu = Regulations.query.filter(Regulations.id == 1).first()
-        # import_min = regu.import_min
-        # inventory_max = regu.inventory_max
-        # apply = regu.active
+        regu = Regulations.query.filter(Regulations.id == 1).first()
+        customer = get_customer_by_id(cus_id)
 
         for p in list(cart.values()):
-
-            # book = get_book_by_id(p["id"])
-            # book_inventory = book.inventory
-
-            # if(apply):
-            #     ''' Sử dụng quy định về lượng sách nhập tối thiểu, lượng tồn tối đa'''
-            #     if()
+            book = get_book_by_id(p["id"])
+            db.session.query(Books).filter(Books.id == p["id"]).update({'inventory': Books.inventory - p["quantity"]})
+            # if (customer.debt > regu.debt_max) and ((book.inventory - p["quantity"]) < regu.inventory_min_when_sell):
+            #     return False
             detail = OrderDetail(order=order,
                                  book_id=int(p["id"]),
                                  quantity=p["quantity"],
@@ -69,21 +65,20 @@ def add_order(cart):
 
 def add_buy(cart):
     if cart and current_user.is_authenticated:
-        quan, total = utils.cart_stats(cart)
-        buy = Buy(emm_id=current_user.id, total=total)
+        quan, total, sup_id = utils.buy_cart_stats(cart)
+        buy = Buy(emm_id=current_user.id, total=total, supplier_id=sup_id)
         db.session.add(buy)
         regu = Regulations.query.filter(Regulations.id == 1).first()
-        apply = regu.active
 
         for p in list(cart.values()):
-            # if(apply):
-            #     book = get_book_by_id(p["id"])
-            #     if(p["quantity"] < regu.import_min and book.inventory >300):
-            #         return False
+            book = get_book_by_id(p["id"])
+            db.session.query(Books).filter(Books.id == p["id"]).update({'inventory': Books.inventory + p["quantity"]})
+            # if (p["quantity"] < regu.import_min) or (book.inventory > regu.inventory_max_when_import) :
+            #     return False
             detail = BuyDetail(buy=buy,
-                                 book_id=int(p["id"]),
-                                 quantity=p["quantity"],
-                                 price=p["price"])
+                               book_id=int(p["id"]),
+                               quantity=p["quantity"],
+                               price=p["price"])
             db.session.add(detail)
 
         try:
@@ -94,8 +89,12 @@ def add_buy(cart):
         return False
 
 
-def get_cate_by_id(id=None):
-    return Categories.query.filter(Categories.id == id).all()
+def get_cate_by_id(cate_id):
+    return Categories.query.get(cate_id)
+
+
+def get_customer_by_id(cus_id):
+    return Customer.query.get(cus_id)
 
 
 def read_customers(cus_id=None, kw=None):
@@ -108,6 +107,10 @@ def read_customers(cus_id=None, kw=None):
         customers = customers.filter(Customer.name.contains(kw))
 
     return customers.all()
+
+
+def get_top_book_by_cate(cate, top):
+    return Books.query.filter(Books.cat_id == cate).limit(top).all()
 
 
 def read_supplier(kw=None):
@@ -145,14 +148,26 @@ def read_categories(kw=None):
     return categories.all()
 
 
-def cart_stats(cart):
-    total_quantity, total_amount = 0, 0
+def sell_cart_stats(cart):
+    total_quantity, total_amount, cus_id = 0, 0, 1
     if cart:
         for p in cart.values():
+            cus_id = p["cus_id"]
             total_quantity = total_quantity + p["quantity"]
             total_amount = total_amount + p["quantity"] * p["price"]
 
-    return total_quantity, total_amount
+    return total_quantity, total_amount, cus_id
+
+
+def buy_cart_stats(cart):
+    total_quantity, total_amount, sup_id = 0, 0, 1
+    if cart:
+        for p in cart.values():
+            sup_id = p["sup_id"]
+            total_quantity = total_quantity + p["quantity"]
+            total_amount = total_amount + p["quantity"] * p["price"]
+
+    return total_quantity, total_amount, sup_id
 
 
 def get_book_by_id(book_id):
