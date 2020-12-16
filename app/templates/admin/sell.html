@@ -1,0 +1,66 @@
+{% extends 'admin/index.html' %}
+{% block body %}
+{% endblock %}
+{% block tail %}
+<body>
+<div class="container">
+    <h1 class="text-center text-info">ORDER FORM</h1>
+    {% if date_sell %}
+        <div class="right">
+            <label>Date: </label>
+            <input id="date" name="date" value="{{date_sell}}" readonly/><br>
+        </div>
+    {% endif %}
+    <div class="from-group " >
+         <label for="customer">Customer name: <span class="red">*</span></label>
+        <select id="customer" class="form-control" >
+            {% for c in customer %}
+            <option value="{{c.id}}" >{{c.name}}</option>
+            {% endfor %}
+        </select><br>
+    </div>
+    <div class="form-group">
+        <label for="name">Book: <span class="red">*</span> </label>
+        <select id="name" class="form-control">
+            {% for p in list_book %}
+          <option name="{{p.price}}" value="{{p.id}}">{{p.name}}</option>
+            {% endfor %}
+        </select><br>
+        <input type="submit" id="submit" name="submit" value="Add Book" onclick="addToSell()">
+    </div>
+
+    <table class="table" id="new-product">
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>PRICE</th>
+            <th>QUANTITY</th>
+        </tr>
+        {% if 'cart' in session %}
+        {% for p in session['cart'].values() %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.price }}</td>
+            <td>
+                <div class="form-group">
+                    <input type="number"
+                           value="{{ p.quantity }}"
+                           class="form-control " onchange="changeQuantity()" id="{{ p.id }}" style="width: 100px;"/>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        {% endif %}
+    </table>
+    <input type="button"
+           onclick="submitOder()"
+           value="SUBMIT"
+           class="btn btn-danger" />
+</div>
+
+</body>
+
+
+{% endblock %}'

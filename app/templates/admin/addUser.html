@@ -1,13 +1,13 @@
 {% extends 'admin/index.html' %}
 {% block body %}
-    {% if current_user.is_authenticated %}
-        <h1 class="text-center text-primary">ADD USER</h1>
-        {% if err_msg %}
-        <div class="alert alert-warning">
-            {{ err_msg }}
-        </div>
-        {% endif %}
-        <form method="post"
+<h1>ADD USER</h1>
+{% if err_msg %}
+<div class="alert alert-success">
+    {{ err_msg }}
+</div>
+{% endif %}
+{% if current_user.is_authenticated %}
+<form method="post"
              action=""
              enctype="multipart/form-data">
             <div class="form-group">
@@ -63,7 +63,10 @@
                       class="btn btn-danger" />
            </div>
         </form>
-    {% else %}
-        {% include 'admin/login.html' %}
+{% else %}
+{% include 'admin/login.html' %}
     {% endif %}
 {% endblock %}'
+
+
+

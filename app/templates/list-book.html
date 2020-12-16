@@ -5,8 +5,9 @@
     <title>Book</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </head>
-<body>
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="1">
     <div class="container">
         <a class="TTlogo" href="#">T&T <span class="bookstore">Bookstore</span></a>
         <h2 class="right"> In books lies the soul of the whole past time</h2>
@@ -41,27 +42,70 @@
                 </div>
             </form>
         </div>
-        <table class="table">
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-sm-1 col-4" id="myScrollspy">
+                <ul class="nav nav-pills flex-column">
+                    {% for cate in cate %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#{{cate.name}}">{{cate.name}}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+            <div class="col-sm-6">
+                {% for cate in cate %}
+                <h2 class="text-danger" id="{{cate.name}}">{{cate.name}}</h2>
+                <div class="card-columns" style="column-count: 5!important;">
+                    {% for b in ut.read_books(cate.id) %}
+                    <button class="card" href="javascript:;"
+                           onclick="addToSell({{ b.id }}, '{{b.name}}', {{ b.price }})">
+                        <div class="card-body text-center">
+                            <img width="90" src="{{ url_for('static', filename=b.image) }}" alt="{{ b.name }}"/>
+                            <p class="card-text">{{ b.name }}</p>
+                            <p class="card-text text-danger">{{ "{:,.1f}".format(b.price) }} VNĐ</p>
+                        </div>
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="cash">
+        <h1 class="text-center text-info">PRODUCT LIST</h1>
+        <table class="table" id="new-product">
             <tr>
-                <th></th>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th></th>
+                <th>ID</th>
+                <th>NAME</th>
+                <th>PRICE</th>
+                <th>QUANTITY</th>
             </tr>
-            {% for b in books %}
+            {% if 'cart' in session %}
+            {% for p in session['cart'].values() %}
             <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.price }}</td>
                 <td>
-                    <img width="120" src="{{ url_for('static', filename=b.image) }}" alt="{{ b.name }}" />
+                    <div class="form-group">
+                        <input type="number"
+                               value="{{ p.quantity }}"
+                               class="form-control " id="{{ p.id }}" style="width: 100px;"/>
+                    </div>
                 </td>
-                <td> {{ b.id }} </td>
-                <td>
-                    <a href="#">{{ b.name }}</a>
-                </td>
-                <td> {{ "{:,.1f}".format(b.price) }} VNĐ</td>
             </tr>
             {% endfor %}
+            {% else %}
+            {% endif %}
         </table>
+        <h1 id="cart-info"></h1>
+        <input type="button"
+               onclick="pay()"
+               value="Pay"
+               class="btn btn-danger" />
+    </div>
     </div>
 </body>
 </html>

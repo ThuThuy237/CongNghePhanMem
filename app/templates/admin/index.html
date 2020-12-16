@@ -7,24 +7,13 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
           crossorigin="anonymous">
-{% endblock %}'
-
-{% block head %}
-    <div class="container">
-        <a class="TTlogo" href="#">T&T <span class="bookstore">Bookstore</span></a>
-        <h2 class="right"> In books lies the soul of the whole past time</h2>
-    </div>
-{% endblock %}'
-
-
-{% block brand %}
-    <i class="fas fa-book iconbar" ></i>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}'
 
 {% block body %}
-    {% if current_user.is_authenticated %}
-        <h1 class="text-center text-success">Wellcom to T&T bookstore</h1>
-    {% else %}
-        {% include 'admin/login.html' %}
+{% if current_user.is_authenticated %}
+<h1 class="text-center text-success">Wellcom to T&T bookstore</h1>
+{% else %}
+{% include 'admin/login.html' %}
     {% endif %}
 {% endblock %}'
