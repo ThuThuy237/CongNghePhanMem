@@ -222,7 +222,7 @@ class Debtor(db.Model):
     __tablename__ = "debtor"
     debt_date = Column(DateTime, default= modelDateTime.today())
     total = Column(Float, nullable=False)
-    Customer_id = Column(Integer, ForeignKey(Customer.id), primary_key=True, nullable=False)
+    customer_id = Column(Integer, ForeignKey(Customer.id), primary_key=True, nullable=False)
 
     def __str__(self):
         return self.total

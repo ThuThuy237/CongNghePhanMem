@@ -89,6 +89,20 @@ def add_buy(cart):
         return False
 
 
+def detele_debt(cus_id, total):
+    if current_user.is_authenticated:
+        collect_debt = CollectDebts(total=total, cus_id=cus_id)
+        db.session.add(collect_debt)
+        db.session.query(Debtor).filter(Debtor.customer_id == cus_id).update({'total': Debtor.total - total})
+
+        try:
+            db.session.commit()
+            return True
+        except Exception as ex:
+            print(ex)
+        return False
+
+
 def get_cate_by_id(cate_id):
     return Categories.query.get(cate_id)
 
@@ -107,6 +121,10 @@ def read_customers(cus_id=None, kw=None):
         customers = customers.filter(Customer.name.contains(kw))
 
     return customers.all()
+
+
+def get_customer_by_name(name):
+    return Customer.query.filter(Customer.name == name).first()
 
 
 def get_top_book_by_cate(cate, top):

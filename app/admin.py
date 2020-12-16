@@ -70,10 +70,18 @@ class CollectDebtView(BaseView):
         customer = utils.read_customers()
         date_collect = datetime.datetime.now()
         date_collect = date_collect.strftime("%d - %B - %Y")
+
+        cus_name = request.args.get('customer')
+        total = request.args.get('total')
+        debtor_id = utils.read_customers(cus_name)
+        utils.detele_debt(cus_id=debtor_id, total=total)
+
         return self.render('admin/collect.html', customer=customer, date=date_collect)
 
     def add(self):
         return self.render('admin/collect.html')
+
+
 
 
 class ManagerView(ModelView):
